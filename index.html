@@ -1,0 +1,283 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Trodac Smart Home Survey</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<style>
+:root {
+  --bg: linear-gradient(180deg, #050f1f, #0b1f3b);
+  --card: #10294d;
+  --accent: #f2994a;
+  --muted: #bfc8d6;
+  --glass: rgba(255,255,255,.08);
+}
+
+* { box-sizing: border-box; }
+
+body {
+  margin: 0;
+  font-family: Inter, system-ui, sans-serif;
+  background: var(--bg);
+  color: white;
+  min-height: 100vh;
+}
+
+.navbar {
+  padding: 24px 40px;
+  font-size: 26px;
+  font-weight: 700;
+}
+
+.container {
+  max-width: 850px;
+  margin: 60px auto;
+  background: var(--card);
+  border-radius: 22px;
+  padding: 50px;
+  box-shadow: 0 40px 80px rgba(0,0,0,.5);
+}
+
+h1 { font-size: 42px; }
+.subtitle { color: var(--muted); margin-bottom: 40px; }
+
+.step { display: none; }
+.step.active { display: block; }
+
+label {
+  display: block;
+  margin-top: 22px;
+  font-size: 14px;
+  color: var(--muted);
+}
+
+input, select {
+  width: 100%;
+  padding: 15px;
+  border-radius: 12px;
+  border: none;
+  outline: none;
+  margin-top: 8px;
+  font-size: 16px;
+  background: var(--glass);
+  color: white;
+}
+
+select {
+  appearance: none;
+  background-image: url("data:image/svg+xml;utf8,<svg fill='white' height='24' viewBox='0 0 24 24' width='24'><path d='M7 10l5 5 5-5z'/></svg>");
+  background-repeat: no-repeat;
+  background-position: right 14px center;
+}
+
+.grid-3 {
+  display: grid;
+  grid-template-columns: repeat(3,1fr);
+  gap: 28px; /* ✅ FIXED SPACING */
+  margin-top: 25px;
+}
+
+.checkbox-group label {
+  display: flex;
+  align-items: center;
+  gap: 10px; /* ✅ TEXT NOT FAR */
+  margin-top: 18px;
+  cursor: pointer;
+  font-size: 15px;
+}
+
+/* ✅ MODERN CHECKBOX */
+.checkbox-group input {
+  appearance: none;
+  width: 20px;
+  height: 20px;
+  background: var(--glass);
+  border-radius: 6px;
+  position: relative;
+}
+
+.checkbox-group input:checked::after {
+  content: "✓";
+  position: absolute;
+  color: var(--accent);
+  font-weight: 700;
+  left: 4px;
+  top: 0;
+}
+
+button {
+  margin-top: 40px;
+  padding: 14px 36px;
+  border-radius: 50px;
+  border: none;
+  background: var(--accent);
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.progress {
+  text-align: right;
+  font-size: 13px;
+  color: var(--muted);
+}
+
+/* ✅ POPUP */
+.popup {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,.6);
+  display: none;
+  align-items: center;
+  justify-content: center;
+}
+
+.popup-box {
+  background: #10294d;
+  padding: 40px;
+  border-radius: 20px;
+  text-align: center;
+}
+</style>
+</head>
+<body>
+
+<div class="navbar">trodac.</div>
+
+<div class="container">
+<h1>Smart Home Survey</h1>
+<p class="subtitle">Help us design your perfect automation system.</p>
+
+<form id="surveyForm">
+
+<!-- STEP 1 -->
+<div class="step active">
+  <div class="progress">Step 1 of 3</div>
+
+  <label>Full Name *</label>
+  <input type="text" id="name" required>
+
+  <label>Phone *</label>
+  <input type="tel" id="phone" required>
+
+  <label>Email *</label>
+  <input type="email" id="email" required>
+
+  <button type="button" onclick="nextStep()">Next</button>
+</div>
+
+<!-- STEP 2 -->
+<div class="step">
+  <div class="progress">Step 2 of 3</div>
+
+  <label>Accommodation *</label>
+  <select id="accommodation" required>
+    <option value="">Select</option>
+    <option>Apartment</option>
+    <option>Villa</option>
+    <option>Office</option>
+  </select>
+
+  <label>Stage *</label>
+  <select id="stage" required>
+    <option value="">Select</option>
+    <option>Under Construction</option>
+    <option>Ready</option>
+  </select>
+
+  <label>City *</label>
+  <select id="city" required>
+    <option value="">Select</option>
+    <option>Dubai</option>
+    <option>Sharjah</option>
+  </select>
+
+  <label>Area *</label>
+  <input type="text" id="area" required>
+
+  <button type="button" onclick="nextStep()">Next</button>
+</div>
+
+<!-- STEP 3 -->
+<div class="step">
+  <div class="progress">Step 3 of 3</div>
+
+  <div class="grid-3">
+    <input type="number" id="roomsCurtains" placeholder="Curtain Rooms" required>
+    <input type="number" id="roomsAC" placeholder="AC Rooms" required>
+    <input type="number" id="roomsSwitch" placeholder="Switch Rooms" required>
+  </div>
+
+  <div class="checkbox-group">
+    <label><input type="checkbox" id="livingCurtains">Living Curtains</label>
+    <label><input type="checkbox" id="livingAC">Living AC</label>
+    <label><input type="checkbox" id="livingSwitch">Living Switch</label>
+  </div>
+
+  <button type="submit">Submit</button>
+</div>
+
+</form>
+</div>
+
+<!-- ✅ POPUP -->
+<div class="popup" id="popup">
+  <div class="popup-box">
+    <h2>✅ Submitted</h2>
+    <p>Your response has been saved successfully.</p>
+    <button onclick="closePopup()">Done</button>
+  </div>
+</div>
+
+<script>
+let currentStep = 0;
+const steps = document.querySelectorAll(".step");
+
+function nextStep() {
+  const inputs = steps[currentStep].querySelectorAll("input, select");
+  for (let i of inputs) {
+    if (!i.checkValidity()) {
+      i.reportValidity();
+      return;
+    }
+  }
+  steps[currentStep].classList.remove("active");
+  currentStep++;
+  steps[currentStep].classList.add("active");
+}
+
+document.getElementById("surveyForm").addEventListener("submit", async (e) => {
+  e.preventDefault();
+
+  const data = {
+    name: name.value,
+    phone: phone.value,
+    email: email.value,
+    accommodation: accommodation.value,
+    stage: stage.value,
+    city: city.value,
+    area: area.value,
+    roomsCurtains: roomsCurtains.value,
+    roomsAC: roomsAC.value,
+    roomsSwitch: roomsSwitch.value,
+    livingCurtains: livingCurtains.checked,
+    livingAC: livingAC.checked,
+    livingSwitch: livingSwitch.checked
+  };
+
+  await fetch("https://script.google.com/macros/s/AKfycbwDnSN5zdjgTCQb2t4GOzlHTo3CbKvnotOOQ0-u_126vB-joyMREiY7nH19F6JW-9n4KQ/exec", {
+    method: "POST",
+    body: JSON.stringify(data)
+  });
+
+  document.getElementById("popup").style.display = "flex";
+  e.target.reset();
+});
+
+function closePopup() {
+  document.getElementById("popup").style.display = "none";
+}
+</script>
+
+</body>
+</html>
