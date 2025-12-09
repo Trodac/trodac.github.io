@@ -10,9 +10,9 @@
 <style>
 :root {
   /* TRODAC IDENTITY COLORS */
-  --bg-dark: #050914; /* Deepest Navy */
-  --card-bg: rgba(20, 30, 48, 0.6); /* Glassy Navy */
-  --trodac-copper: #c67c53; /* The signature Rust/Orange accent */
+  --bg-dark: #050914;
+  --card-bg: rgba(20, 30, 48, 0.6);
+  --trodac-copper: #c67c53;
   --trodac-copper-glow: rgba(198, 124, 83, 0.4);
   --text-white: #ffffff;
   --text-muted: #94a3b8;
@@ -116,6 +116,47 @@ select {
 }
 
 .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+
+/* --- NUMBER SELECTOR STYLES --- */
+.number-selector-container {
+    margin-bottom: 25px;
+}
+.number-selector-label {
+    display: block;
+    color: var(--trodac-copper); 
+    font-size: 12px; font-weight: 700; 
+    margin-bottom: 12px; letter-spacing: 1px;
+}
+.number-options {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+}
+.num-box {
+    flex: 1;
+    min-width: 45px;
+    height: 50px;
+    display: flex; align-items: center; justify-content: center;
+    background: var(--input-bg);
+    border: 1px solid var(--glass-border);
+    border-radius: 12px;
+    cursor: pointer;
+    font-weight: 600; font-size: 16px;
+    color: var(--text-muted);
+    transition: 0.2s;
+}
+.num-box:hover {
+    background: rgba(255,255,255,0.05);
+    border-color: rgba(255,255,255,0.2);
+}
+.num-box.selected {
+    background: var(--trodac-copper);
+    color: white;
+    box-shadow: 0 5px 15px var(--trodac-copper-glow);
+    border-color: var(--trodac-copper);
+    transform: translateY(-2px);
+}
+/* ---------------------------------- */
 
 .tile-grid {
   display: grid;
@@ -280,14 +321,23 @@ button {
     </div>
 
     <div class="step" id="step3">
-      <p style="color:var(--trodac-copper); font-size:12px; font-weight:700; margin-bottom:15px; letter-spacing:1px;">ROOM CONFIGURATION</p>
       
-      <div class="input-group">
-        <input type="text" id="roomConfig" placeholder=" " required>
-        <label>Number of Rooms / Types (e.g. 3 Bedrooms)</label>
+      <div class="number-selector-container">
+        <span class="number-selector-label">BEDROOMS</span>
+        <div class="number-options" id="bedroomOptions">
+            <div class="num-box" onclick="selectNumber(this, 'rooms')">1</div>
+            <div class="num-box" onclick="selectNumber(this, 'rooms')">2</div>
+            <div class="num-box" onclick="selectNumber(this, 'rooms')">3</div>
+            <div class="num-box" onclick="selectNumber(this, 'rooms')">4</div>
+            <div class="num-box" onclick="selectNumber(this, 'rooms')">5</div>
+            <div class="num-box" onclick="selectNumber(this, 'rooms')">6+</div>
+        </div>
+        <input type="hidden" id="rooms" required> 
       </div>
 
-      <p style="color:var(--trodac-copper); font-size:12px; font-weight:700; margin:25px 0 15px 0; letter-spacing:1px;">DESIRED FEATURES</p>
+      <div class="number-selector-container">
+        <span class="number-selector-label">LIVING ROOM FEATURES</span>
+      </div>
        
       <div class="tile-grid">
         <div class="card-visual" data-checkbox-id="livingCurtains" onclick="toggleTile(this)">
@@ -362,8 +412,14 @@ function switchStep(targetIndex) {
 function nextStep(index) {
   const currentInputs = steps[index].querySelectorAll("input[required], select[required]");
   for (let input of currentInputs) {
-    if (!input.checkValidity()) {
-      input.reportValidity();
+    // Check if input is empty
+    if (!input.value) {
+      // Custom reporting for hidden inputs (like the number selectors)
+      if(input.type === 'hidden') {
+         alert("Please make a selection to continue.");
+      } else {
+         input.reportValidity();
+      }
       return;
     }
   }
@@ -374,12 +430,27 @@ function prevStep(targetIndex) {
     switchStep(targetIndex - 1); 
 }
 
+// Logic for Number Boxes
+function selectNumber(element, hiddenInputId) {
+    const parent = element.parentElement;
+    const hiddenInput = document.getElementById(hiddenInputId);
+    
+    // Remove selected class from siblings
+    const siblings = parent.getElementsByClassName('num-box');
+    for (let sib of siblings) {
+        sib.classList.remove('selected');
+    }
+    
+    // Select clicked
+    element.classList.add('selected');
+    hiddenInput.value = element.innerText; // Store value
+}
+
+// Logic for Feature Tiles
 function toggleTile(visualElement) {
     visualElement.classList.toggle('selected');
-    
     const checkboxId = visualElement.getAttribute('data-checkbox-id');
     const checkbox = document.getElementById(checkboxId);
-    
     checkbox.checked = visualElement.classList.contains('selected');
 }
 
@@ -389,27 +460,30 @@ document.getElementById("surveyForm").addEventListener("submit", async (e) => {
   const originalText = btn.innerHTML;
   btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i>';
   
-  // Updated data object to remove specific room counts and add general config
+  // FIX FOR LEADING ZERO
+  let rawPhone = document.getElementById('phone').value;
+  let formattedPhone = "'" + rawPhone; 
+
   const data = {
     name: document.getElementById('name').value,
-    phone: document.getElementById('phone').value,
+    phone: formattedPhone, 
     email: document.getElementById('email').value,
     accommodation: document.getElementById('accommodation').value,
     stage: document.getElementById('stage').value,
     city: document.getElementById('city').value,
     area: document.getElementById('area').value,
     
-    // New single field for room configuration
-    roomConfig: document.getElementById('roomConfig').value,
+    // --- FIX HERE: Changed 'bedrooms' to 'rooms' to match Google Script ---
+    rooms: document.getElementById('rooms').value,
     
-    // Booleans for desired features
+    // Features
     livingCurtains: document.getElementById('livingCurtains').checked,
     livingAC: document.getElementById('livingAC').checked,
     livingSwitch: document.getElementById('livingSwitch').checked
   };
 
   try {
-    await fetch("https://script.google.com/macros/s/AKfycbwDnSN5zdjgTCQb2t4GOzlHTo3CbKvnotOOQ0-u_126vB-joyMREiY7nH19F6JW-9n4KQ/exec", {
+    await fetch("https://script.google.com/macros/s/AKfycbyHWzLZ__RNXw7GXpfv_8iMwjX9v-ZABC6ZFQmn7jLQ3uekxcSTNmtoPvEfPHVTLZBstg/exec", {
       method: "POST",
       body: JSON.stringify(data),
       mode: 'no-cors'
@@ -417,9 +491,10 @@ document.getElementById("surveyForm").addEventListener("submit", async (e) => {
     document.getElementById("popup").style.display = "flex";
     e.target.reset();
     
-    // Reset visual tiles
-    document.querySelectorAll('.card-visual').forEach(el => el.classList.remove('selected'));
-    
+    // Reset visuals (tiles and number boxes)
+    document.querySelectorAll('.card-visual, .num-box').forEach(el => el.classList.remove('selected'));
+    document.getElementById('rooms').value = "";
+
   } catch (err) {
     document.getElementById("popup").style.display = "flex"; 
   } finally {
