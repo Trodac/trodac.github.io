@@ -116,9 +116,7 @@ select {
 }
 
 .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
-.grid-3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; }
 
-/* FIX: New, simplified tile selector structure */
 .tile-grid {
   display: grid;
   grid-template-columns: repeat(3, 1fr); 
@@ -133,8 +131,8 @@ select {
   background: var(--input-bg);
   border: 1px solid var(--glass-border);
   border-radius: 16px; 
-  cursor: pointer; /* FIX: Ensure the whole div is clickable */
-  aspect-ratio: 1 / 0.85; /* Consistent size */
+  cursor: pointer;
+  aspect-ratio: 1 / 0.85;
   text-align: center; gap: 12px;
   transition: 0.3s;
 }
@@ -175,7 +173,7 @@ button {
 .btn-back:hover { color: white; }
 
 .popup {
-  position: fixed; inset: 0; background: rgba(0,0,0,0.9);
+  position: fixed; inset: 0; 
   backdrop-filter: blur(10px); display: none;
   align-items: center; justify-content: center; z-index: 100;
 }
@@ -190,7 +188,7 @@ button {
 
 @media(max-width: 600px) {
   .container { padding: 30px 25px; margin-top: 10px;}
-  .grid-2, .grid-3 { grid-template-columns: 1fr; }
+  .grid-2 { grid-template-columns: 1fr; }
   .tile-grid { grid-template-columns: repeat(2, 1fr); } 
   .card-visual { aspect-ratio: 1/1; }
   h1 { font-size: 28px; }
@@ -240,6 +238,7 @@ button {
           <option>Apartment</option>
           <option>Villa</option>
           <option>Office Space</option>
+          <option>Retail</option>
         </select>
         <label>Accommodation Type</label>
       </div>
@@ -248,7 +247,7 @@ button {
         <select id="stage" required>
           <option value="" disabled selected></option>
           <option>Under Construction</option>
-          <option>Ready to Move</option>
+          <option>Already Living In</option>
           <option>Renovation</option>
         </select>
         <label>Property Stage</label>
@@ -261,6 +260,10 @@ button {
             <option>Dubai</option>
             <option>Sharjah</option>
             <option>Abu Dhabi</option>
+            <option>Ajman</option>
+            <option>Ras Al Khaimah</option>
+            <option>Umm Al Quwain</option>
+            <option>Fujairah</option>
           </select>
           <label>City</label>
         </div>
@@ -277,38 +280,29 @@ button {
     </div>
 
     <div class="step" id="step3">
-      <p style="color:var(--trodac-copper); font-size:12px; font-weight:700; margin-bottom:15px; letter-spacing:1px;">ROOM QUANTITIES</p>
-      <div class="grid-3">
-        <div class="input-group">
-          <input type="number" id="roomsCurtains" placeholder=" " required min="0">
-          <label>Curtain Rooms</label>
-        </div>
-        <div class="input-group">
-          <input type="number" id="roomsAC" placeholder=" " required min="0">
-          <label>AC Rooms</label>
-        </div>
-        <div class="input-group">
-          <input type="number" id="roomsSwitch" placeholder=" " required min="0">
-          <label>Switch Rooms</label>
-        </div>
+      <p style="color:var(--trodac-copper); font-size:12px; font-weight:700; margin-bottom:15px; letter-spacing:1px;">ROOM CONFIGURATION</p>
+      
+      <div class="input-group">
+        <input type="text" id="roomConfig" placeholder=" " required>
+        <label>Number of Rooms / Types (e.g. 3 Bedrooms)</label>
       </div>
 
-      <p style="color:var(--trodac-copper); font-size:12px; font-weight:700; margin:25px 0 15px 0; letter-spacing:1px;">LIVING ROOM FEATURES</p>
-      
+      <p style="color:var(--trodac-copper); font-size:12px; font-weight:700; margin:25px 0 15px 0; letter-spacing:1px;">DESIRED FEATURES</p>
+       
       <div class="tile-grid">
         <div class="card-visual" data-checkbox-id="livingCurtains" onclick="toggleTile(this)">
-          <i class="fas fa-blinds"></i>
-          <span>Curtains</span>
+          <i class="fas fa-scroll"></i>
+          <span>Smart Curtains</span>
         </div>
 
         <div class="card-visual" data-checkbox-id="livingAC" onclick="toggleTile(this)">
           <i class="fas fa-wind"></i>
-          <span>AC Control</span>
+          <span>Smart AC</span>
         </div>
 
         <div class="card-visual" data-checkbox-id="livingSwitch" onclick="toggleTile(this)">
-          <i class="fas fa-toggle-on"></i>
-          <span>Smart Switches</span>
+          <i class="fas fa-lightbulb"></i>
+          <span>Smart Lights</span>
         </div>
       </div>
 
@@ -351,26 +345,21 @@ function updateProgress(stepIndex) {
 }
 
 function switchStep(targetIndex) {
-    // Fade out old step
     steps[currentStep].style.opacity = '0';
     steps[currentStep].style.transform = 'translateY(-10px)';
     steps[currentStep].classList.remove("active");
 
-    // Switch to new step after animation
     setTimeout(() => {
         currentStep = targetIndex;
         steps[currentStep].classList.add("active");
         updateProgress(currentStep);
         
-        // Reset animation styles for new step
         steps[currentStep].style.opacity = '';
         steps[currentStep].style.transform = '';
     }, 300);
 }
 
-
 function nextStep(index) {
-  // Validate current step inputs
   const currentInputs = steps[index].querySelectorAll("input[required], select[required]");
   for (let input of currentInputs) {
     if (!input.checkValidity()) {
@@ -381,23 +370,18 @@ function nextStep(index) {
   switchStep(currentStep + 1);
 }
 
-// FIX: Back Button Logic
 function prevStep(targetIndex) {
-    // targetIndex is the index of the step to go back to (0, 1)
     switchStep(targetIndex - 1); 
 }
 
-// FIX: Living Room Selection Toggle (Simplified for cleaner UI)
 function toggleTile(visualElement) {
     visualElement.classList.toggle('selected');
     
     const checkboxId = visualElement.getAttribute('data-checkbox-id');
     const checkbox = document.getElementById(checkboxId);
     
-    // Set the state of the hidden input based on the visual element's state
     checkbox.checked = visualElement.classList.contains('selected');
 }
-
 
 document.getElementById("surveyForm").addEventListener("submit", async (e) => {
   e.preventDefault();
@@ -405,6 +389,7 @@ document.getElementById("surveyForm").addEventListener("submit", async (e) => {
   const originalText = btn.innerHTML;
   btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i>';
   
+  // Updated data object to remove specific room counts and add general config
   const data = {
     name: document.getElementById('name').value,
     phone: document.getElementById('phone').value,
@@ -413,10 +398,11 @@ document.getElementById("surveyForm").addEventListener("submit", async (e) => {
     stage: document.getElementById('stage').value,
     city: document.getElementById('city').value,
     area: document.getElementById('area').value,
-    roomsCurtains: document.getElementById('roomsCurtains').value,
-    roomsAC: document.getElementById('roomsAC').value,
-    roomsSwitch: document.getElementById('roomsSwitch').value,
-    // These values are now correctly updated by the toggleTile function
+    
+    // New single field for room configuration
+    roomConfig: document.getElementById('roomConfig').value,
+    
+    // Booleans for desired features
     livingCurtains: document.getElementById('livingCurtains').checked,
     livingAC: document.getElementById('livingAC').checked,
     livingSwitch: document.getElementById('livingSwitch').checked
@@ -430,8 +416,12 @@ document.getElementById("surveyForm").addEventListener("submit", async (e) => {
     });
     document.getElementById("popup").style.display = "flex";
     e.target.reset();
+    
+    // Reset visual tiles
+    document.querySelectorAll('.card-visual').forEach(el => el.classList.remove('selected'));
+    
   } catch (err) {
-    document.getElementById("popup").style.display = "flex"; // Fallback: still show success
+    document.getElementById("popup").style.display = "flex"; 
   } finally {
     btn.innerHTML = originalText;
   }
@@ -442,7 +432,6 @@ function closePopup() {
   location.reload();
 }
 
-// Initialize progress bar on load
 window.onload = () => updateProgress(0);
 </script>
 
