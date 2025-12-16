@@ -1,463 +1,900 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<title>Trodac Smart Home Survey</title>
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@300;400;600;700&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <meta charset="UTF-8">
+    <title>Trodac Smart Home Survey</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
-<style>
-:root {
-  --bg-dark: #050914;
-  --card-bg: rgba(20, 30, 48, 0.6);
-  --trodac-copper: #c67c53;
-  --trodac-copper-glow: rgba(198, 124, 83, 0.4);
-  --text-white: #ffffff;
-  --text-muted: #94a3b8;
-  --glass-border: rgba(255, 255, 255, 0.08);
-  --input-bg: rgba(255, 255, 255, 0.03);
-}
+    <style>
+        :root {
+            --bg-dark: #050914;
+            --card-bg: rgba(20, 30, 48, 0.6);
+            --trodac-copper: #c67c53;
+            --trodac-copper-glow: rgba(198, 124, 83, 0.4);
+            --text-white: #ffffff;
+            --text-muted: #94a3b8;
+            --glass-border: rgba(255, 255, 255, 0.08);
+            --input-bg: rgba(255, 255, 255, 0.03);
+        }
 
-* { box-sizing: border-box; transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); }
+        * {
+            box-sizing: border-box;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
 
-body {
-  margin: 0;
-  font-family: 'Manrope', sans-serif;
-  background: radial-gradient(circle at top right, #1e293b, #0f172a, #020617);
-  color: var(--text-white);
-  min-height: 100vh;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  overflow-x: hidden;
-}
+        body {
+            margin: 0;
+            font-family: 'Manrope', sans-serif;
+            background: radial-gradient(circle at top right, #1e293b, #0f172a, #020617);
+            color: var(--text-white);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            overflow-x: hidden;
+        }
 
-body::before {
-  content: ''; position: fixed; top: -10%; right: -10%;
-  width: 50vw; height: 50vw;
-  background: var(--trodac-copper);
-  filter: blur(180px); opacity: 0.15; z-index: -1;
-  animation: breathe 8s infinite alternate;
-}
-@keyframes breathe { 0% { opacity: 0.1; } 100% { opacity: 0.2; } }
+        body::before {
+            content: '';
+            position: fixed;
+            top: -10%;
+            right: -10%;
+            width: 50vw;
+            height: 50vw;
+            background: var(--trodac-copper);
+            filter: blur(180px);
+            opacity: 0.15;
+            z-index: -1;
+            animation: breathe 8s infinite alternate;
+        }
 
-.navbar { width: 100%; padding: 30px 50px; display: flex; justify-content: space-between; align-items: center; }
-.brand { font-size: 28px; font-weight: 800; letter-spacing: -1px; color: white; }
+        @keyframes breathe {
+            0% {
+                opacity: 0.1;
+            }
+            100% {
+                opacity: 0.2;
+            }
+        }
 
-.container {
-  width: 90%; max-width: 750px; margin: 20px auto;
-  background: var(--card-bg);
-  backdrop-filter: blur(24px); -webkit-backdrop-filter: blur(24px);
-  border: 1px solid var(--glass-border);
-  border-radius: 24px;
-  padding: 50px;
-  box-shadow: 0 30px 60px -10px rgba(0, 0, 0, 0.6);
-  position: relative; overflow: hidden;
-}
+        .navbar {
+            width: 100%;
+            padding: 30px 50px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
 
-h1 { font-size: 36px; font-weight: 700; margin: 0 0 10px 0; color: white; }
-.subtitle { color: var(--trodac-copper); font-size: 13px; font-weight: 700; text-transform: uppercase; letter-spacing: 2px; display: block; margin-bottom: 30px;}
+        .brand {
+            font-size: 28px;
+            font-weight: 800;
+            letter-spacing: -1px;
+            color: white;
+        }
 
-.progress-container { display: flex; gap: 8px; margin-bottom: 40px; }
-.progress-step { flex: 1; height: 4px; background: rgba(255,255,255,0.1); border-radius: 2px; }
-.progress-step.active { background: var(--trodac-copper); box-shadow: 0 0 15px var(--trodac-copper-glow); }
-.progress-step.completed { background: #10b981; }
+        .container {
+            width: 90%;
+            max-width: 750px;
+            margin: 20px auto;
+            background: var(--card-bg);
+            backdrop-filter: blur(24px);
+            -webkit-backdrop-filter: blur(24px);
+            border: 1px solid var(--glass-border);
+            border-radius: 24px;
+            padding: 50px;
+            box-shadow: 0 30px 60px -10px rgba(0, 0, 0, 0.6);
+            position: relative;
+            overflow: hidden;
+        }
 
-.step { display: none; animation: slideUp 0.5s cubic-bezier(0.2, 0.8, 0.2, 1); }
-.step.active { display: block; }
-@keyframes slideUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+        h1 {
+            font-size: 36px;
+            font-weight: 700;
+            margin: 0 0 10px 0;
+            color: white;
+        }
 
-.input-group { position: relative; margin-bottom: 24px; }
+        .subtitle {
+            color: var(--trodac-copper);
+            font-size: 13px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            display: block;
+            margin-bottom: 30px;
+        }
 
-input, select {
-  width: 100%; padding: 18px 20px;
-  background: var(--input-bg);
-  border: 1px solid var(--glass-border);
-  border-radius: 12px;
-  color: white; font-size: 16px; outline: none;
-  font-family: 'Manrope', sans-serif;
-}
-label {
-  position: absolute; left: 20px; top: 18px;
-  color: var(--text-muted); font-size: 15px;
-  pointer-events: none; transition: 0.25s ease;
-}
+        .progress-container {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 40px;
+        }
 
-input:focus, select:focus { border-color: var(--trodac-copper); background: rgba(198, 124, 83, 0.05); box-shadow: 0 0 0 4px rgba(198, 124, 83, 0.1); }
-input:focus ~ label, input:not(:placeholder-shown) ~ label, select:focus ~ label, select:valid ~ label { top: -10px; left: 12px; font-size: 12px; color: var(--trodac-copper); font-weight: 700; background: #0f172a; padding: 0 6px; border-radius: 4px; }
+        .progress-step {
+            flex: 1;
+            height: 4px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 2px;
+        }
 
-select {
-    appearance: none;
-    background-image: url("data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22292.4%22%20height%2D%22292.4%22%3E%3Cpath%20fill%3D%22%23c67c53%22%20d%3D%22M287%2069.4a17.6%2017.6%200%200%200-13-5.4H18.4c-5%200-9.3%201.8-12.9%205.4A17.6%2017.6%200%200%200%200%2082.2c0%205%201.8%209.3%205.4%2012.9l128%20127.9c3.6%203.6%207.8%205.4%2012.8%205.4s9.2-1.8%2012.8-5.4L287%2095c3.5-3.5%205.4-7.8%205.4-12.8%200-5-1.9-9.2-5.5-12.8z%22%2F%3E%3C%2Fsvg%3E");
-    background-repeat: no-repeat; background-position: right 20px center; background-size: 10px;
-}
+        .progress-step.active {
+            background: var(--trodac-copper);
+            box-shadow: 0 0 15px var(--trodac-copper-glow);
+        }
 
-.grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+        .progress-step.completed {
+            background: #10b981;
+        }
 
-.number-selector-container { margin-bottom: 25px; }
-.number-selector-label { display: block; color: var(--trodac-copper); font-size: 12px; font-weight: 700; margin-bottom: 12px; letter-spacing: 1px; }
-.number-options { display: flex; gap: 10px; flex-wrap: wrap; }
-.num-box { flex: 1; min-width: 45px; height: 50px; display: flex; align-items: center; justify-content: center; background: var(--input-bg); border: 1px solid var(--glass-border); border-radius: 12px; cursor: pointer; font-weight: 600; font-size: 16px; color: var(--text-muted); transition: 0.2s; }
-.num-box:hover { background: rgba(255,255,255,0.05); border-color: rgba(255,255,255,0.2); }
-.num-box.selected { background: var(--trodac-copper); color: white; box-shadow: 0 5px 15px var(--trodac-copper-glow); border-color: var(--trodac-copper); transform: translateY(-2px); }
+        .step {
+            display: none;
+            animation: slideUp 0.5s cubic-bezier(0.2, 0.8, 0.2, 1);
+        }
 
-.tile-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 15px; margin-top: 15px; margin-bottom: 25px; }
+        .step.active {
+            display: block;
+        }
 
-.card-visual {
-  height: 100%; width: 100%; display: flex; flex-direction: column; align-items: center; justify-content: center;
-  background: var(--input-bg); border: 1px solid var(--glass-border); border-radius: 16px; cursor: pointer;
-  aspect-ratio: 1 / 0.85; text-align: center; gap: 10px; transition: 0.3s;
-}
+        @keyframes slideUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
 
-.card-visual i { font-size: 24px; color: var(--text-muted); transition: 0.3s; }
-.card-visual span { font-size: 13px; font-weight: 600; color: var(--text-muted); }
+        .input-group {
+            position: relative;
+            margin-bottom: 24px;
+        }
 
-.card-visual.selected { background: rgba(198, 124, 83, 0.15); border-color: var(--trodac-copper); box-shadow: 0 10px 25px -5px rgba(198, 124, 83, 0.3); transform: translateY(-3px); }
-.card-visual.selected i { color: var(--trodac-copper); transform: scale(1.1); }
-.card-visual.selected span { color: white; }
+        input,
+        select {
+            width: 100%;
+            padding: 18px 20px;
+            background: var(--input-bg);
+            border: 1px solid var(--glass-border);
+            border-radius: 12px;
+            color: white;
+            font-size: 16px;
+            outline: none;
+            font-family: 'Manrope', sans-serif;
+        }
 
-.room-header { color: white; font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: 1.5px; margin-top: 35px; border-bottom: 1px solid var(--glass-border); padding-bottom: 8px; margin-bottom: 15px; }
+        label {
+            position: absolute;
+            left: 20px;
+            top: 18px;
+            color: var(--text-muted);
+            font-size: 15px;
+            pointer-events: none;
+            transition: 0.25s ease;
+        }
 
-.btn-container { margin-top: 45px; display: flex; justify-content: space-between; align-items: center; }
+        input:focus,
+        select:focus {
+            border-color: var(--trodac-copper);
+            background: rgba(198, 124, 83, 0.05);
+            box-shadow: 0 0 0 4px rgba(198, 124, 83, 0.1);
+        }
 
-button { padding: 16px 40px; border-radius: 50px; border: none; font-size: 15px; font-weight: 700; cursor: pointer; letter-spacing: 0.5px; }
-.btn-next { background: white; color: #020617; box-shadow: 0 10px 20px rgba(255, 255, 255, 0.1); }
-.btn-next:hover { transform: translateY(-2px); box-shadow: 0 15px 30px rgba(255, 255, 255, 0.2); }
-.btn-submit { background: var(--trodac-copper); color: white; box-shadow: 0 10px 25px rgba(198, 124, 83, 0.3); }
-.btn-submit:hover { background: #d98d63; transform: translateY(-2px); box-shadow: 0 15px 35px rgba(198, 124, 83, 0.4); }
-.btn-back { background: transparent; color: var(--text-muted); padding: 10px 20px; }
-.btn-back:hover { color: white; }
+        input:focus~label,
+        input:not(:placeholder-shown)~label,
+        select:focus~label,
+        select:valid~label {
+            top: -10px;
+            left: 12px;
+            font-size: 12px;
+            color: var(--trodac-copper);
+            font-weight: 700;
+            background: #0f172a;
+            padding: 0 6px;
+            border-radius: 4px;
+        }
 
-.popup { position: fixed; inset: 0; backdrop-filter: blur(10px); display: none; align-items: center; justify-content: center; z-index: 100; }
-.popup-box { background: #0f172a; border: 1px solid var(--glass-border); padding: 50px; border-radius: 24px; text-align: center; box-shadow: 0 20px 60px rgba(0,0,0,0.8); border-top: 4px solid var(--trodac-copper); }
-.popup h2 { color: white; font-size: 28px; margin-bottom: 10px;}
-.popup p { color: var(--text-muted); }
+        select {
+            appearance: none;
+            background-image: url("data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22292.4%22%20height%3D%22292.4%22%3E%3Cpath%20fill%3D%22%23c67c53%22%20d%3D%22M287%2069.4a17.6%2017.6%200%200%200-13-5.4H18.4c-5%200-9.3%201.8-12.9%205.4A17.6%2017.6%200%200%200%200%2082.2c0%205%201.8%209.3%205.4%2012.9l128%20127.9c3.6%203.6%207.8%205.4%2012.8%205.4s9.2-1.8%2012.8-5.4L287%2095c3.5-3.5%205.4-7.8%205.4-12.8%200-5-1.9-9.2-5.5-12.8z%22%2F%3E%3C%2Fsvg%3E");
+            background-repeat: no-repeat;
+            background-position: right 20px center;
+            background-size: 10px;
+        }
 
-/* Custom Email Error Styling */
-#email-error {
-  color: #ff3333; 
-  font-size: 13px;
-  margin-top: -15px;
-  margin-bottom: 20px;
-  display: block;
-  height: 16px;
-}
+        .grid-2 {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
 
-@media(max-width: 600px) {
-  .container { padding: 30px 20px; }
-  .grid-2 { grid-template-columns: 1fr; }
-  .tile-grid { grid-template-columns: repeat(2, 1fr); } 
-}
-</style>
+        .number-selector-container {
+            margin-bottom: 25px;
+        }
+
+        .number-selector-label {
+            display: block;
+            color: var(--trodac-copper);
+            font-size: 12px;
+            font-weight: 700;
+            margin-bottom: 12px;
+            letter-spacing: 1px;
+        }
+
+        .number-options {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .num-box {
+            flex: 1;
+            min-width: 45px;
+            height: 50px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: var(--input-bg);
+            border: 1px solid var(--glass-border);
+            border-radius: 12px;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 16px;
+            color: var(--text-muted);
+            transition: 0.2s;
+        }
+
+        .num-box:hover {
+            background: rgba(255, 255, 255, 0.05);
+            border-color: rgba(255, 255, 255, 0.2);
+        }
+
+        .num-box.selected {
+            background: var(--trodac-copper);
+            color: white;
+            box-shadow: 0 5px 15px var(--trodac-copper-glow);
+            border-color: var(--trodac-copper);
+            transform: translateY(-2px);
+        }
+
+        .tile-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 15px;
+            margin-top: 15px;
+            margin-bottom: 25px;
+        }
+
+        .card-visual {
+            height: 100%;
+            width: 100%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            background: var(--input-bg);
+            border: 1px solid var(--glass-border);
+            border-radius: 16px;
+            cursor: pointer;
+            aspect-ratio: 1 / 0.85;
+            text-align: center;
+            gap: 10px;
+            transition: 0.3s;
+        }
+
+        .card-visual i {
+            font-size: 24px;
+            color: var(--text-muted);
+            transition: 0.3s;
+        }
+
+        .card-visual span {
+            font-size: 13px;
+            font-weight: 600;
+            color: var(--text-muted);
+        }
+
+        .card-visual.selected {
+            background: rgba(198, 124, 83, 0.15);
+            border-color: var(--trodac-copper);
+            box-shadow: 0 10px 25px -5px rgba(198, 124, 83, 0.3);
+            transform: translateY(-3px);
+        }
+
+        .card-visual.selected i {
+            color: var(--trodac-copper);
+            transform: scale(1.1);
+        }
+
+        .card-visual.selected span {
+            color: white;
+        }
+
+        .room-header {
+            color: white;
+            font-size: 12px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            margin-top: 35px;
+            border-bottom: 1px solid var(--glass-border);
+            padding-bottom: 8px;
+            margin-bottom: 15px;
+        }
+
+        .btn-container {
+            margin-top: 45px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        button {
+            padding: 16px 40px;
+            border-radius: 50px;
+            border: none;
+            font-size: 15px;
+            font-weight: 700;
+            cursor: pointer;
+            letter-spacing: 0.5px;
+        }
+
+        .btn-next {
+            background: white;
+            color: #020617;
+            box-shadow: 0 10px 20px rgba(255, 255, 255, 0.1);
+        }
+
+        .btn-next:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 15px 30px rgba(255, 255, 255, 0.2);
+        }
+
+        .btn-submit {
+            background: var(--trodac-copper);
+            color: white;
+            box-shadow: 0 10px 25px rgba(198, 124, 83, 0.3);
+        }
+
+        .btn-submit:hover {
+            background: #d98d63;
+            transform: translateY(-2px);
+            box-shadow: 0 15px 35px rgba(198, 124, 83, 0.4);
+        }
+
+        .btn-back {
+            background: transparent;
+            color: var(--text-muted);
+            padding: 10px 20px;
+        }
+
+        .btn-back:hover {
+            color: white;
+        }
+
+        .popup {
+            position: fixed;
+            inset: 0;
+            backdrop-filter: blur(10px);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 100;
+        }
+
+        .popup-box {
+            background: #0f172a;
+            border: 1px solid var(--glass-border);
+            padding: 50px;
+            border-radius: 24px;
+            text-align: center;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.8);
+            border-top: 4px solid var(--trodac-copper);
+        }
+
+        .popup h2 {
+            color: white;
+            font-size: 28px;
+            margin-bottom: 10px;
+        }
+
+        .popup p {
+            color: var(--text-muted);
+        }
+
+        /* Custom Email Error Styling */
+        #email-error {
+            color: #ff3333;
+            font-size: 13px;
+            margin-top: -15px;
+            margin-bottom: 20px;
+            display: block;
+            height: 16px;
+        }
+        
+        /* Quote Display Animation */
+        .quote-display #quotePriceDisplay.updated {
+            color: #10b981;
+            transform: scale(1.05);
+            text-shadow: 0 0 10px rgba(16, 185, 129, 0.5);
+        }
+
+        @media(max-width: 600px) {
+            .container {
+                padding: 30px 20px;
+            }
+
+            .grid-2 {
+                grid-template-columns: 1fr;
+            }
+
+            .tile-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+    </style>
 </head>
+
 <body>
 
-<div class="navbar">
-  <div class="brand">trodac.</div>
-</div>
-
-<div class="container">
-  <span class="subtitle">Smart Home Configurator</span>
-  <h1>Craft Your Space</h1>
-
-  <div class="progress-container">
-    <div class="progress-step active" id="p1"></div>
-    <div class="progress-step" id="p2"></div>
-    <div class="progress-step" id="p3"></div>
-  </div>
-
-  <form id="surveyForm">
-
-    <div class="step active" id="step1">
-      <div class="input-group">
-        <input type="text" id="name" placeholder=" " required>
-        <label>Full Name</label>
-      </div>
-      <div class="input-group">
-        <input type="tel" id="phone" placeholder=" " required>
-        <label>Phone Number</label>
-      </div>
-      <div class="input-group">
-        <input type="email" id="email" placeholder=" " required>
-        <label>Email Address</label>
-      </div>
-      <span id="email-error"></span>
-      
-      <div class="btn-container" style="justify-content: flex-end;">
-        <button type="button" class="btn-next" onclick="nextStep(0)">Start <i class="fas fa-arrow-right"></i></button>
-      </div>
+    <div class="navbar">
+        <div class="brand">trodac.</div>
     </div>
 
-    <div class="step" id="step2">
-      <div class="input-group">
-        <select id="accommodation" required>
-          <option value="" disabled selected></option>
-          <option>Apartment</option>
-          <option>Villa</option>
-          <option>Office Space</option>
-          <option>Retail</option>
-        </select>
-        <label>Accommodation Type</label>
-      </div>
-      <div class="input-group">
-        <select id="stage" required>
-          <option value="" disabled selected></option>
-          <option>Under Construction</option>
-          <option>Already Living In</option>
-          <option>Renovation</option>
-        </select>
-        <label>Property Stage</label>
-      </div>
-      <div class="grid-2">
-        <div class="input-group">
-          <select id="city" required>
-            <option value="" disabled selected></option>
-            <option>Dubai</option><option>Sharjah</option><option>Abu Dhabi</option>
-            <option>Ajman</option><option>Ras Al Khaimah</option><option>Umm Al Quwain</option><option>Fujairah</option>
-          </select>
-          <label>City</label>
+    <div class="container">
+        <span class="subtitle">Smart Home Configurator</span>
+        <h1>Craft Your Space</h1>
+
+        <div class="progress-container">
+            <div class="progress-step active" id="p1"></div>
+            <div class="progress-step" id="p2"></div>
+            <div class="progress-step" id="p3"></div>
         </div>
-        <div class="input-group">
-          <input type="text" id="area" placeholder=" ">
-          <label>Area / District (Optional)</label>
-        </div>
-      </div>
-      <div class="btn-container">
-        <button type="button" class="btn-back" onclick="prevStep(1)">Back</button>
-        <button type="button" class="btn-next" onclick="nextStep(1)">Next <i class="fas fa-arrow-right"></i></button>
-      </div>
+
+        <form id="surveyForm">
+            <input type="hidden" id="trackingRowId" value="">
+
+            <div class="step active" id="step1">
+                <div class="input-group">
+                    <input type="text" id="name" placeholder=" " required>
+                    <label>Full Name</label>
+                </div>
+                <div class="input-group">
+                    <input type="tel" id="phone" placeholder=" " required>
+                    <label>Phone Number</label>
+                </div>
+                <div class="input-group">
+                    <input type="email" id="email" placeholder=" " required>
+                    <label>Email Address</label>
+                </div>
+                <span id="email-error"></span>
+
+                <div class="btn-container" style="justify-content: flex-end;">
+                    <button type="button" class="btn-next" onclick="nextStep(0)">Start <i class="fas fa-arrow-right"></i></button>
+                </div>
+            </div>
+
+            <div class="step" id="step2">
+                <div class="input-group">
+                    <select id="accommodation" required>
+                        <option value="" disabled selected></option>
+                        <option>Apartment</option>
+                        <option>Villa</option>
+                        <option>Office Space</option>
+                        <option>Retail</option>
+                    </select>
+                    <label>Accommodation Type</label>
+                </div>
+                <div class="input-group">
+                    <select id="stage" required>
+                        <option value="" disabled selected></option>
+                        <option>Under Construction</option>
+                        <option>Already Living In</option>
+                        <option>Renovation</option>
+                    </select>
+                    <label>Property Stage</label>
+                </div>
+                <div class="grid-2">
+                    <div class="input-group">
+                        <select id="city" required>
+                            <option value="" disabled selected></option>
+                            <option>Dubai</option>
+                            <option>Sharjah</option>
+                            <option>Abu Dhabi</option>
+                            <option>Ajman</option>
+                            <option>Ras Al Khaimah</option>
+                            <option>Umm Al Quwain</option>
+                            <option>Fujairah</option>
+                        </select>
+                        <label>City</label>
+                    </div>
+                    <div class="input-group">
+                        <input type="text" id="area" placeholder=" ">
+                        <label>Area / District (Optional)</label>
+                    </div>
+                </div>
+                <div class="btn-container">
+                    <button type="button" class="btn-back" onclick="prevStep(1)">Back</button>
+                    <button type="button" class="btn-next" onclick="nextStep(1)">Next <i class="fas fa-arrow-right"></i></button>
+                </div>
+            </div>
+
+            <div class="step" id="step3">
+
+                <div class="number-selector-container">
+                    <span class="number-selector-label">LIVING ROOM FEATURES</span>
+                </div>
+                <div class="tile-grid">
+                    <div class="card-visual" data-checkbox-id="livingCurtains" onclick="toggleTile(this)"><i class="fas fa-scroll"></i><span>Smart Curtains</span></div>
+                    <div class="card-visual" data-checkbox-id="livingAC" onclick="toggleTile(this)"><i class="fas fa-wind"></i><span>Smart AC</span></div>
+                    <div class="card-visual" data-checkbox-id="livingSwitch" onclick="toggleTile(this)"><i class="fas fa-lightbulb"></i><span>Smart Lights</span></div>
+                </div>
+                <input type="checkbox" id="livingCurtains" style="display:none;">
+                <input type="checkbox" id="livingAC" style="display:none;">
+                <input type="checkbox" id="livingSwitch" style="display:none;">
+
+                <div class="number-selector-container">
+                    <span class="number-selector-label">HOW MANY BEDROOMS?</span>
+                    <div class="number-options" id="bedroomOptions">
+                        <div class="num-box" onclick="selectNumber(this, 'rooms')">1</div>
+                        <div class="num-box" onclick="selectNumber(this, 'rooms')">2</div>
+                        <div class="num-box" onclick="selectNumber(this, 'rooms')">3</div>
+                        <div class="num-box" onclick="selectNumber(this, 'rooms')">4</div>
+                        <div class="num-box" onclick="selectNumber(this, 'rooms')">5</div>
+                    </div>
+                    <input type="hidden" id="rooms" required>
+                </div>
+
+                <div id="dynamicRoomsContainer"></div>
+
+                <div class="number-selector-container" style="margin-top: 40px;">
+                    <span class="number-selector-label">ADDITIONAL FEATURES</span>
+                </div>
+                <div class="tile-grid">
+                    <div class="card-visual" data-checkbox-id="smartLockAccessControl" onclick="toggleTile(this)"><i class="fas fa-door-closed"></i><span>Smart Lock & Access Control</span></div>
+                    <div class="card-visual" data-checkbox-id="outdoorLawn" onclick="toggleTile(this)"><i class="fas fa-leaf"></i><span>Outdoor Lawn</span></div>
+                    <div class="card-visual" data-checkbox-id="swimmingPool" onclick="toggleTile(this)"><i class="fas fa-swimmer"></i><span>Swimming Pool</span></div>
+                    <div class="card-visual" data-checkbox-id="motionSensor" onclick="toggleTile(this)"><i class="fas fa-rss"></i><span>Motion Sensor</span></div>
+                    <div class="card-visual" data-checkbox-id="voiceCommand" onclick="toggleTile(this)"><i class="fas fa-microphone"></i><span>Voice Command</span></div>
+                    <div class="card-visual" data-checkbox-id="securitySurveillance" onclick="toggleTile(this)"><i class="fas fa-video"></i><span>Security & Surveillance</span></div>
+                    <div class="card-visual" data-checkbox-id="wifiManagement" onclick="toggleTile(this)"><i class="fas fa-wifi"></i><span>Wifi Management</span></div>
+                </div>
+
+                <input type="checkbox" id="smartLockAccessControl" style="display:none;">
+                <input type="checkbox" id="outdoorLawn" style="display:none;">
+                <input type="checkbox" id="swimmingPool" style="display:none;">
+                <input type="checkbox" id="motionSensor" style="display:none;">
+                <input type="checkbox" id="voiceCommand" style="display:none;">
+                <input type="checkbox" id="securitySurveillance" style="display:none;">
+                <input type="checkbox" id="wifiManagement" style="display:none;">
+
+                <div class="quote-display" style="border-top: 1px solid var(--glass-border); padding-top: 20px; margin-top: 40px; text-align: center;">
+                    <h3 style="margin: 0 0 10px 0; font-size: 16px; color: var(--text-muted);">Estimated Quote:</h3>
+                    <h2 id="quotePriceDisplay" style="margin: 0; font-size: 32px; color: var(--trodac-copper);">--</h2>
+                    <input type="hidden" id="quotePrice" value="">
+                </div>
+                <div class="btn-container">
+                    <button type="button" class="btn-back" onclick="prevStep(2)">Back</button>
+                    <button type="button" class="btn-next" onclick="calculateQuote()">Get Quote</button>
+                    <button type="submit" class="btn-submit" id="finalSubmitBtn" style="display:none;">Finalize</button>
+                </div>
+            </div>
+
+        </form>
     </div>
 
-    <div class="step" id="step3">
-      
-      <div class="number-selector-container">
-        <span class="number-selector-label">LIVING ROOM FEATURES</span>
-      </div>
-      <div class="tile-grid">
-        <div class="card-visual" data-checkbox-id="livingCurtains" onclick="toggleTile(this)"><i class="fas fa-scroll"></i><span>Smart Curtains</span></div>
-        <div class="card-visual" data-checkbox-id="livingAC" onclick="toggleTile(this)"><i class="fas fa-wind"></i><span>Smart AC</span></div>
-        <div class="card-visual" data-checkbox-id="livingSwitch" onclick="toggleTile(this)"><i class="fas fa-lightbulb"></i><span>Smart Lights</span></div>
-      </div>
-      <input type="checkbox" id="livingCurtains" style="display:none;">
-      <input type="checkbox" id="livingAC" style="display:none;">
-      <input type="checkbox" id="livingSwitch" style="display:none;">
-
-      <div class="number-selector-container">
-        <span class="number-selector-label">HOW MANY BEDROOMS?</span>
-        <div class="number-options" id="bedroomOptions">
-            <div class="num-box" onclick="selectNumber(this, 'rooms')">1</div>
-            <div class="num-box" onclick="selectNumber(this, 'rooms')">2</div>
-            <div class="num-box" onclick="selectNumber(this, 'rooms')">3</div>
-            <div class="num-box" onclick="selectNumber(this, 'rooms')">4</div>
-            <div class="num-box" onclick="selectNumber(this, 'rooms')">5</div>
+    <div class="popup" id="popup">
+        <div class="popup-box">
+            <div style="font-size: 50px; color: var(--trodac-copper); margin-bottom: 20px;"><i class="fas fa-check-circle"></i></div>
+            <h2>Received</h2>
+            <p>Your quote configuration has been saved. We will contact you shortly.</p>
+            <button onclick="closePopup()" class="btn-next" style="margin-top:20px;">Done</button>
         </div>
-        <input type="hidden" id="rooms" required> 
-      </div>
-
-      <div id="dynamicRoomsContainer"></div>
-
-      <div class="number-selector-container" style="margin-top: 40px;">
-        <span class="number-selector-label">ADDITIONAL FEATURES</span>
-      </div>
-      <div class="tile-grid">
-        <div class="card-visual" data-checkbox-id="smartLock" onclick="toggleTile(this)"><i class="fas fa-door-closed"></i><span>Smart Lock</span></div>
-        <div class="card-visual" data-checkbox-id="outdoorLawn" onclick="toggleTile(this)"><i class="fas fa-leaf"></i><span>Outdoor Lawn</span></div>
-        <div class="card-visual" data-checkbox-id="swimmingPool" onclick="toggleTile(this)"><i class="fas fa-swimmer"></i><span>Swimming Pool</span></div>
-        <div class="card-visual" data-checkbox-id="motionSensor" onclick="toggleTile(this)"><i class="fas fa-rss"></i><span>Motion Sensor</span></div>
-        <div class="card-visual" data-checkbox-id="voiceCommand" onclick="toggleTile(this)"><i class="fas fa-microphone"></i><span>Voice Command</span></div>
-      </div>
-      
-      <input type="checkbox" id="smartLock" style="display:none;">
-      <input type="checkbox" id="outdoorLawn" style="display:none;">
-      <input type="checkbox" id="swimmingPool" style="display:none;">
-      <input type="checkbox" id="motionSensor" style="display:none;">
-      <input type="checkbox" id="voiceCommand" style="display:none;">
-
-      <div class="btn-container">
-        <button type="button" class="btn-back" onclick="prevStep(2)">Back</button>
-        <button type="submit" class="btn-submit">Submit Request</button>
-      </div>
     </div>
 
-  </form>
-</div>
+    <script>
+        // *** IMPORTANT: You MUST replace this with your actual Google Web App URL ***
+        // Ensure this URL ends in /exec
+        const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbwrV1CPlH8epFbyCMKfuGlEYJsMvkGGWXY6TbUVEOdOATR_rbjo9B_jcSP4v12p67HcnA/exec";
 
-<div class="popup" id="popup">
-  <div class="popup-box">
-    <div style="font-size: 50px; color: var(--trodac-copper); margin-bottom: 20px;"><i class="fas fa-check-circle"></i></div>
-    <h2>Received</h2>
-    <p>We will craft your proposal shortly.</p>
-    <button onclick="closePopup()" class="btn-next" style="margin-top:20px;">Done</button>
-  </div>
-</div>
+        const steps = document.querySelectorAll(".step");
+        const progressSteps = document.querySelectorAll(".progress-step");
+        let currentStep = 0;
 
-<script>
-const steps = document.querySelectorAll(".step");
-const progressSteps = document.querySelectorAll(".progress-step");
-let currentStep = 0;
+        // --- PRICING CONFIGURATION ---
+        const BASE_PRICE = 10000; // Base installation cost
+        const ROOM_FEATURE_PRICE_DEFAULT = { curtain: 700, ac: 1000, light: 350 };
+        const FEATURE_PRICES = {
+            // Living Room
+            livingCurtains: 800, livingAC: 1200, livingSwitch: 400,
+            // Other Features
+            smartLockAccessControl: 1500, outdoorLawn: 2000, swimmingPool: 3000,
+            motionSensor: 500, voiceCommand: 700, securitySurveillance: 2500, wifiManagement: 900
+        };
+        // -----------------------------
 
-function updateProgress(stepIndex) {
-    progressSteps.forEach((p, i) => {
-        p.classList.remove("active", "completed");
-        if (i < stepIndex) p.classList.add("completed");
-        else if (i === stepIndex) p.classList.add("active");
-    });
-}
-
-function switchStep(targetIndex) {
-    steps[currentStep].style.opacity = '0';
-    steps[currentStep].style.transform = 'translateY(-10px)';
-    steps[currentStep].classList.remove("active");
-    setTimeout(() => {
-        currentStep = targetIndex;
-        steps[currentStep].classList.add("active");
-        updateProgress(currentStep);
-        steps[currentStep].style.opacity = '';
-        steps[currentStep].style.transform = '';
-    }, 300);
-}
-
-// NEW: Email Validation Function
-function validateEmailFormat(email) {
-    // Regex for basic email format validation
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    return emailRegex.test(email);
-}
-
-function nextStep(index) {
-  const currentInputs = steps[index].querySelectorAll("input[required], select[required]");
-  const emailInput = document.getElementById('email');
-  const emailError = document.getElementById('email-error');
-  
-  // Clear previous error message
-  if (emailError) emailError.innerText = ''; 
-
-  // Basic check for empty required fields
-  for (let input of currentInputs) {
-    if (!input.value) {
-      if(input.type === 'hidden') alert("Please select the number of bedrooms.");
-      else input.reportValidity();
-      return;
-    }
-  }
-
-  // CUSTOM VALIDATION FOR STEP 1 (Email)
-  if (index === 0) {
-    if (!validateEmailFormat(emailInput.value)) {
-        if (emailError) {
-            emailError.innerText = 'Please enter a valid email address (e.g., user@domain.com).';
-            emailInput.focus();
-        } else {
-            alert('Please enter a valid email address.');
+        function updateProgress(stepIndex) {
+            progressSteps.forEach((p, i) => {
+                p.classList.remove("active", "completed");
+                if (i < stepIndex) p.classList.add("completed");
+                else if (i === stepIndex) p.classList.add("active");
+            });
         }
-        return; // Stop execution, do not advance
-    }
-  }
 
-  // If all checks pass, proceed
-  switchStep(currentStep + 1);
-}
+        function switchStep(targetIndex) {
+            steps[currentStep].style.opacity = '0';
+            steps[currentStep].style.transform = 'translateY(-10px)';
+            steps[currentStep].classList.remove("active");
+            setTimeout(() => {
+                currentStep = targetIndex;
+                steps[currentStep].classList.add("active");
+                updateProgress(currentStep);
+                steps[currentStep].style.opacity = '';
+                steps[currentStep].style.transform = '';
+            }, 300);
+        }
 
-function prevStep(targetIndex) { switchStep(targetIndex - 1); }
+        function validateEmailFormat(email) {
+            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            return emailRegex.test(email);
+        }
 
-// Selection for Number Boxes (Bedrooms)
-function selectNumber(element, hiddenInputId) {
-    const parent = element.parentElement;
-    const hiddenInput = document.getElementById(hiddenInputId);
-    const siblings = parent.getElementsByClassName('num-box');
-    for (let sib of siblings) sib.classList.remove('selected');
-    element.classList.add('selected');
-    hiddenInput.value = element.innerText;
-    
-    if(hiddenInputId === 'rooms') {
-      generateRoomOptions(parseInt(element.innerText));
-    }
-}
+        // --- STEP NAVIGATION LOGIC ---
+        async function nextStep(index) {
+            const currentInputs = steps[index].querySelectorAll("input[required], select[required]");
+            const emailInput = document.getElementById('email');
+            const emailError = document.getElementById('email-error');
 
-// Toggle for Feature Tiles
-function toggleTile(visualElement) {
-    visualElement.classList.toggle('selected');
-    const checkboxId = visualElement.getAttribute('data-checkbox-id');
-    const checkbox = document.getElementById(checkboxId);
-    if(checkbox) checkbox.checked = visualElement.classList.contains('selected');
-}
+            if (emailError) emailError.innerText = '';
 
-// Dynamically build room controls based on selected count
-function generateRoomOptions(count) {
-  const container = document.getElementById('dynamicRoomsContainer');
-  container.innerHTML = ''; 
-  for (let i = 1; i <= count; i++) {
-    const roomDiv = document.createElement('div');
-    roomDiv.innerHTML = `
-      <div class="room-header">ROOM ${i} CONFIGURATION</div>
-      <div class="tile-grid">
-        <div class="card-visual" data-checkbox-id="room${i}Curtain" onclick="toggleTile(this)"><i class="fas fa-scroll"></i><span>Curtains</span></div>
-        <div class="card-visual" data-checkbox-id="room${i}AC" onclick="toggleTile(this)"><i class="fas fa-wind"></i><span>AC</span></div>
-        <div class="card-visual" data-checkbox-id="room${i}Light" onclick="toggleTile(this)"><i class="fas fa-lightbulb"></i><span>Lights</span></div>
-      </div>
-      <input type="checkbox" id="room${i}Curtain" style="display:none;">
-      <input type="checkbox" id="room${i}AC" style="display:none;">
-      <input type="checkbox" id="room${i}Light" style="display:none;">
-    `;
-    container.appendChild(roomDiv);
-  }
-}
+            for (let input of currentInputs) {
+                if (!input.value) {
+                    if (input.type === 'hidden') alert("Please select the number of bedrooms.");
+                    else input.reportValidity();
+                    return;
+                }
+            }
 
-// Form Submission
-document.getElementById("surveyForm").addEventListener("submit", async (e) => {
-  e.preventDefault();
-  const btn = e.target.querySelector("button[type='submit']");
-  const originalBtnText = btn.innerHTML;
-  btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i>';
-  
-  const getVal = (id) => {
-    const el = document.getElementById(id);
-    return el ? (el.type === 'checkbox' ? el.checked : el.value) : false;
-  };
+            if (index === 0) {
+                if (!validateEmailFormat(emailInput.value)) {
+                    if (emailError) {
+                        emailError.innerText = 'Please enter a valid email address (e.g., user@domain.com).';
+                        emailInput.focus();
+                    }
+                    return;
+                }
+            }
 
-  const data = {
-    name: getVal('name'), 
-    phone: "'" + getVal('phone'), 
-    email: getVal('email'),
-    accommodation: getVal('accommodation'), 
-    stage: getVal('stage'),
-    city: getVal('city'), 
-    area: getVal('area'), 
-    rooms: getVal('rooms'),
-    livingCurtains: getVal('livingCurtains'), 
-    livingAC: getVal('livingAC'), 
-    livingSwitch: getVal('livingSwitch'),
-    smartLock: getVal('smartLock'), 
-    outdoorLawn: getVal('outdoorLawn'), 
-    swimmingPool: getVal('swimmingPool'),
-    motionSensor: getVal('motionSensor'),
-    voiceCommand: getVal('voiceCommand')
-  };
+            if (index === 1) {
+                // When leaving Step 2 to enter Step 3, submit the basic data first.
+                // This call must succeed before moving on.
+                try {
+                    await submitBasicData();
+                } catch(e) {
+                    // If basic data submission fails, stop navigation
+                    return;
+                }
+            }
 
-  // Populate dynamic room checkboxes (supports up to 5)
-  for(let i=1; i<=5; i++) {
-    data[`room${i}Curtain`] = getVal(`room${i}Curtain`);
-    data[`room${i}AC`] = getVal(`room${i}AC`);
-    data[`room${i}Light`] = getVal(`room${i}Light`);
-  }
+            switchStep(currentStep + 1);
+        }
 
-  try {
-    // Replace with your current Google Web App URL
-    await fetch("https://script.google.com/macros/s/AKfycbwqFfvnboZqVdyCD66AKwiVsPmN60GsQv03IghDpmgRBU03KzXK85VHcGB7IGScCmnvag/exec", {
-      method: "POST", body: JSON.stringify(data), mode: 'no-cors'
-    });
-    document.getElementById("popup").style.display = "flex";
-  } catch (err) {
-    console.error(err);
-    alert("Submission failed. Please try again.");
-  } finally {
-    btn.innerHTML = originalBtnText;
-  }
-});
+        function prevStep(targetIndex) {
+            switchStep(targetIndex - 1);
+        }
 
-function closePopup() { location.reload(); }
-window.onload = () => updateProgress(0);
-</script>
+        // --- DATA COLLECTION FUNCTIONS ---
+        const getVal = (id) => {
+            const el = document.getElementById(id);
+            return el ? (el.type === 'checkbox' ? el.checked : el.value) : false;
+        };
+
+        function collectBasicData() {
+            return {
+                name: getVal('name'),
+                phone: "'" + getVal('phone'), // prepend ' to preserve leading zeros
+                email: getVal('email'),
+                accommodation: getVal('accommodation'),
+                stage: getVal('stage'),
+                city: getVal('city'),
+                area: getVal('area'),
+                rooms: getVal('rooms')
+            };
+        }
+
+        function collectFeatureData() {
+            const data = {
+                rowId: getVal('trackingRowId'),
+                livingCurtains: getVal('livingCurtains'),
+                livingAC: getVal('livingAC'),
+                livingSwitch: getVal('livingSwitch'),
+                smartLockAccessControl: getVal('smartLockAccessControl'),
+                outdoorLawn: getVal('outdoorLawn'),
+                swimmingPool: getVal('swimmingPool'),
+                motionSensor: getVal('motionSensor'),
+                voiceCommand: getVal('voiceCommand'),
+                securitySurveillance: getVal('securitySurveillance'),
+                wifiManagement: getVal('wifiManagement'),
+                quotePrice: document.getElementById('quotePrice').value
+            };
+
+            for (let i = 1; i <= 5; i++) {
+                data[`room${i}Curtain`] = getVal(`room${i}Curtain`);
+                data[`room${i}AC`] = getVal(`room${i}AC`);
+                data[`room${i}Light`] = getVal(`room${i}Light`);
+            }
+            return data;
+        }
+
+        // --- SUBMISSION STEP 1: Save basic info and get an ID (Row ID) ---
+        async function submitBasicData() {
+            const basicData = collectBasicData();
+            
+            try {
+                // Using mode: 'cors' and Content-Type for clean JSON response handling
+                const response = await fetch(SCRIPT_URL + "?function=saveBasicDetails", {
+                    method: "POST", 
+                    body: JSON.stringify(basicData), 
+                    mode: 'cors', 
+                    headers: {'Content-Type': 'application/json'}
+                });
+                const result = await response.json();
+                
+                if (result.status === "success" && result.rowId) {
+                    document.getElementById('trackingRowId').value = result.rowId;
+                    console.log("Basic data saved. Tracking Row ID:", result.rowId);
+                } else {
+                    // This handles server-side error return (e.g., if JSON parsing failed)
+                    throw new Error("Server failed to return a valid tracking ID: " + result.message);
+                }
+            } catch (err) {
+                console.error("Basic Data Submission Failed:", err);
+                alert("Error saving basic details. Please check your form and network connection.");
+                throw err; 
+            }
+        }
+
+        // --- QUOTE CALCULATION LOGIC ---
+        function calculateQuote() {
+            const featureData = collectFeatureData();
+            let total = BASE_PRICE;
+            let roomCount = parseInt(getVal('rooms') || 0);
+
+            // Add static feature prices
+            for (const feature in FEATURE_PRICES) {
+                if (featureData[feature]) {
+                    total += FEATURE_PRICES[feature];
+                }
+            }
+
+            // Add room feature prices
+            for (let i = 1; i <= roomCount; i++) {
+                if (featureData[`room${i}Curtain`]) total += ROOM_FEATURE_PRICE_DEFAULT.curtain;
+                if (featureData[`room${i}AC`]) total += ROOM_FEATURE_PRICE_DEFAULT.ac;
+                if (featureData[`room${i}Light`]) total += ROOM_FEATURE_PRICE_DEFAULT.light;
+            }
+
+            // Display and save the price
+            const priceDisplay = document.getElementById('quotePriceDisplay');
+            const priceHidden = document.getElementById('quotePrice');
+            
+            priceDisplay.innerText = `AED ${total.toLocaleString('en-US')}`;
+            priceHidden.value = total;
+
+            // Update buttons
+            document.querySelector('.btn-next').innerText = 'Recalculate Quote';
+            document.getElementById('finalSubmitBtn').style.display = 'inline-block';
+
+            // Visual feedback
+            priceDisplay.classList.add('updated');
+            setTimeout(() => priceDisplay.classList.remove('updated'), 500);
+            console.log("Quote Calculated:", total);
+        }
+
+        // --- FINAL SUBMISSION (STEP 3) ---
+        document.getElementById("surveyForm").addEventListener("submit", async (e) => {
+            e.preventDefault();
+            const btn = document.getElementById('finalSubmitBtn');
+            const originalBtnText = btn.innerHTML;
+            
+            if (!getVal('trackingRowId')) {
+                alert("Error: Basic details were not saved. Please go back to Step 1 & 2.");
+                return;
+            }
+            
+            if (document.getElementById('quotePrice').value === '' || document.getElementById('quotePrice').value === '0') {
+                 calculateQuote(); 
+            }
+            
+            btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Finalizing...';
+            
+            const featureData = collectFeatureData();
+
+            try {
+                // Call the main doPost function (which calls updateQuote)
+                const response = await fetch(SCRIPT_URL, {
+                    method: "POST", 
+                    body: JSON.stringify(featureData), 
+                    mode: 'cors', // Use 'cors' now that we have the CORS header set on the server
+                    headers: {'Content-Type': 'application/json'}
+                });
+                
+                const result = await response.json();
+
+                if (result.status === "update_success") {
+                    document.getElementById("popup").style.display = "flex";
+                } else {
+                    console.error("Final Submission Failed (Server Error):", result.message);
+                    alert("Final submission failed due to a server error. Check logs.");
+                }
+            } catch (err) {
+                console.error("Final Submission Failed (Network Error):", err);
+                alert("Submission failed. Please check your network connection.");
+            } finally {
+                btn.innerHTML = originalBtnText;
+            }
+        });
+
+        // --- UTILITY FUNCTIONS (Element handlers) ---
+        function selectNumber(element, hiddenInputId) {
+            const parent = element.parentElement;
+            const hiddenInput = document.getElementById(hiddenInputId);
+            const siblings = parent.getElementsByClassName('num-box');
+            for (let sib of siblings) sib.classList.remove('selected');
+            element.classList.add('selected');
+            hiddenInput.value = element.innerText;
+
+            if (hiddenInputId === 'rooms') {
+                generateRoomOptions(parseInt(element.innerText));
+                // Reset quote calculation when room count changes
+                document.getElementById('quotePriceDisplay').innerText = '--';
+                document.getElementById('quotePrice').value = '';
+                document.querySelector('.btn-next').innerText = 'Get Quote';
+                document.getElementById('finalSubmitBtn').style.display = 'none';
+            }
+        }
+
+        function toggleTile(visualElement) {
+            visualElement.classList.toggle('selected');
+            const checkboxId = visualElement.getAttribute('data-checkbox-id');
+            const checkbox = document.getElementById(checkboxId);
+            if (checkbox) checkbox.checked = visualElement.classList.contains('selected');
+
+            // When a tile is toggled, reset quote and allow recalculation
+            document.getElementById('quotePriceDisplay').innerText = '--';
+            document.getElementById('quotePrice').value = '';
+            document.querySelector('.btn-next').innerText = 'Get Quote';
+            document.getElementById('finalSubmitBtn').style.display = 'none';
+        }
+
+        function generateRoomOptions(count) {
+            const container = document.getElementById('dynamicRoomsContainer');
+            container.innerHTML = '';
+            for (let i = 1; i <= count; i++) {
+                const roomDiv = document.createElement('div');
+                roomDiv.innerHTML = `
+                <div class="room-header">ROOM ${i} CONFIGURATION</div>
+                <div class="tile-grid">
+                    <div class="card-visual" data-checkbox-id="room${i}Curtain" onclick="toggleTile(this)"><i class="fas fa-scroll"></i><span>Curtains</span></div>
+                    <div class="card-visual" data-checkbox-id="room${i}AC" onclick="toggleTile(this)"><i class="fas fa-wind"></i><span>AC</span></div>
+                    <div class="card-visual" data-checkbox-id="room${i}Light" onclick="toggleTile(this)"><i class="fas fa-lightbulb"></i><span>Lights</span></div>
+                </div>
+                <input type="checkbox" id="room${i}Curtain" style="display:none;">
+                <input type="checkbox" id="room${i}AC" style="display:none;">
+                <input type="checkbox" id="room${i}Light" style="display:none;">
+                `;
+                container.appendChild(roomDiv);
+            }
+        }
+
+        function closePopup() {
+            location.reload();
+        }
+
+        window.onload = () => updateProgress(0);
+    </script>
 </body>
 </html>
