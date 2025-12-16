@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Trodac Smart Home Survey</title>
+    <title>Trodac Smart Survey</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@300;400;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
@@ -414,13 +414,6 @@
             display: block;
             height: 16px;
         }
-        
-        /* Quote Display Animation */
-        .quote-display #quotePriceDisplay.updated {
-            color: #10b981;
-            transform: scale(1.05);
-            text-shadow: 0 0 10px rgba(16, 185, 129, 0.5);
-        }
 
         @media(max-width: 600px) {
             .container {
@@ -455,7 +448,6 @@
         </div>
 
         <form id="surveyForm">
-            <input type="hidden" id="trackingRowId" value="">
 
             <div class="step active" id="step1">
                 <div class="input-group">
@@ -539,11 +531,11 @@
                 <div class="number-selector-container">
                     <span class="number-selector-label">HOW MANY BEDROOMS?</span>
                     <div class="number-options" id="bedroomOptions">
-                        <div class="num-box" onclick="selectNumber(this, 'rooms')">1</div>
-                        <div class="num-box" onclick="selectNumber(this, 'rooms')">2</div>
-                        <div class="num-box" onclick="selectNumber(this, 'rooms')">3</div>
-                        <div class="num-box" onclick="selectNumber(this, 'rooms')">4</div>
-                        <div class="num-box" onclick="selectNumber(this, 'rooms')">5</div>
+                        <div class="num-box" data-value="1" onclick="selectNumber(this, 'rooms')">1</div>
+                        <div class="num-box" data-value="2" onclick="selectNumber(this, 'rooms')">2</div>
+                        <div class="num-box" data-value="3" onclick="selectNumber(this, 'rooms')">3</div>
+                        <div class="num-box" data-value="4" onclick="selectNumber(this, 'rooms')">4</div>
+                        <div class="num-box" data-value="5" onclick="selectNumber(this, 'rooms')">5</div>
                     </div>
                     <input type="hidden" id="rooms" required>
                 </div>
@@ -571,15 +563,17 @@
                 <input type="checkbox" id="securitySurveillance" style="display:none;">
                 <input type="checkbox" id="wifiManagement" style="display:none;">
 
-                <div class="quote-display" style="border-top: 1px solid var(--glass-border); padding-top: 20px; margin-top: 40px; text-align: center;">
-                    <h3 style="margin: 0 0 10px 0; font-size: 16px; color: var(--text-muted);">Estimated Quote:</h3>
-                    <h2 id="quotePriceDisplay" style="margin: 0; font-size: 32px; color: var(--trodac-copper);">--</h2>
-                    <input type="hidden" id="quotePrice" value="">
+                <div id="quoteDisplay" style="text-align: center; margin-top: 40px; padding: 20px; border: 1px dashed var(--glass-border); border-radius: 12px; display: none;">
+                    <p style="color: var(--text-muted); font-weight: 600; margin: 0 0 5px 0;">Estimated Smart Home Quote</p>
+                    <h2 id="quotePrice" style="color: var(--trodac-copper); font-size: 38px; margin: 0; font-weight: 700;">--</h2>
+                    <p style="color: var(--text-muted); font-style: italic; font-size: 13px;">(Quote is a non-binding estimate.)</p>
                 </div>
+                <input type="hidden" id="finalQuotePrice">
+
                 <div class="btn-container">
                     <button type="button" class="btn-back" onclick="prevStep(2)">Back</button>
-                    <button type="button" class="btn-next" onclick="calculateQuote()">Get Quote</button>
-                    <button type="submit" class="btn-submit" id="finalSubmitBtn" style="display:none;">Finalize</button>
+                    <button type="button" class="btn-submit" id="getQuoteButton" onclick="getQuote()">Get Quote <i class="fas fa-calculator"></i></button>
+                    <button type="submit" class="btn-submit" id="finalSubmitButton" style="display:none;">Finalize Request</button>
                 </div>
             </div>
 
@@ -590,31 +584,69 @@
         <div class="popup-box">
             <div style="font-size: 50px; color: var(--trodac-copper); margin-bottom: 20px;"><i class="fas fa-check-circle"></i></div>
             <h2>Received</h2>
-            <p>Your quote configuration has been saved. We will contact you shortly.</p>
+            <p>Your configuration and quote request has been finalized. We will craft your proposal shortly.</p>
             <button onclick="closePopup()" class="btn-next" style="margin-top:20px;">Done</button>
         </div>
     </div>
 
     <script>
-        // *** IMPORTANT: You MUST replace this with your actual Google Web App URL ***
-        // Ensure this URL ends in /exec
-        const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbwrV1CPlH8epFbyCMKfuGlEYJsMvkGGWXY6TbUVEOdOATR_rbjo9B_jcSP4v12p67HcnA/exec";
-
         const steps = document.querySelectorAll(".step");
         const progressSteps = document.querySelectorAll(".progress-step");
         let currentStep = 0;
+        let submittedRowId = null; // Store the row ID for the final update
+        // !!! IMPORTANT: REPLACE THIS PLACEHOLDER URL WITH YOUR DEPLOYED GOOGLE APPS SCRIPT WEB APP URL !!!
+        const webAppUrl = "https://script.google.com/macros/s/AKfycbzsyVwNwDmECLAh6XvCkWgN5NUq_R87zR3RgLMeBMdeCYbB1wV3e4l4RwbFixSmBmd6Aw/exec";
 
-        // --- PRICING CONFIGURATION ---
-        const BASE_PRICE = 10000; // Base installation cost
-        const ROOM_FEATURE_PRICE_DEFAULT = { curtain: 700, ac: 1000, light: 350 };
-        const FEATURE_PRICES = {
-            // Living Room
-            livingCurtains: 800, livingAC: 1200, livingSwitch: 400,
-            // Other Features
-            smartLockAccessControl: 1500, outdoorLawn: 2000, swimmingPool: 3000,
-            motionSensor: 500, voiceCommand: 700, securitySurveillance: 2500, wifiManagement: 900
+        // --- Utility Functions ---
+
+        const getVal = (id) => {
+            const el = document.getElementById(id);
+            if (!el) return false;
+            // Return 'Yes' or 'No' for checkboxes for better spreadsheet logging
+            if (el.type === 'checkbox') return el.checked ? 'Yes' : 'No'; 
+            if (el.tagName === 'SELECT' && el.value === "") return "";
+            return el.value || '';
         };
-        // -----------------------------
+
+        const getFormData = (submissionType) => {
+            const data = {
+                submissionType: submissionType, 
+                name: getVal('name'),
+                phone: getVal('phone'), // Handled phone prefix in GAS for text formatting
+                email: getVal('email'),
+                accommodation: getVal('accommodation'),
+                stage: getVal('stage'),
+                city: getVal('city'),
+                area: getVal('area'),
+                rooms: getVal('rooms'),
+                livingCurtains: getVal('livingCurtains'),
+                livingAC: getVal('livingAC'),
+                livingSwitch: getVal('livingSwitch'),
+                smartLockAccessControl: getVal('smartLockAccessControl'),
+                outdoorLawn: getVal('outdoorLawn'),
+                swimmingPool: getVal('swimmingPool'),
+                motionSensor: getVal('motionSensor'),
+                voiceCommand: getVal('voiceCommand'),
+                securitySurveillance: getVal('securitySurveillance'),
+                wifiManagement: getVal('wifiManagement'),
+                finalQuotePrice: getVal('finalQuotePrice')
+            };
+
+            // Populate dynamic room checkboxes (up to 5)
+            for (let i = 1; i <= 5; i++) {
+                data[`room${i}Curtain`] = getVal(`room${i}Curtain`);
+                data[`room${i}AC`] = getVal(`room${i}AC`);
+                data[`room${i}Light`] = getVal(`room${i}Light`);
+            }
+            
+            if (submittedRowId) {
+                data.row = submittedRowId;
+            }
+
+            return data;
+        };
+        
+        // --- Multi-Step Navigation & Validation ---
 
         function updateProgress(stepIndex) {
             progressSteps.forEach((p, i) => {
@@ -628,6 +660,7 @@
             steps[currentStep].style.opacity = '0';
             steps[currentStep].style.transform = 'translateY(-10px)';
             steps[currentStep].classList.remove("active");
+            
             setTimeout(() => {
                 currentStep = targetIndex;
                 steps[currentStep].classList.add("active");
@@ -637,47 +670,58 @@
             }, 300);
         }
 
+        function validateStepInputs(index) {
+            const currentInputs = steps[index].querySelectorAll("input[required], select[required]");
+            const emailInput = document.getElementById('email');
+            const emailError = document.getElementById('email-error');
+            
+            if (emailError) emailError.innerText = '';
+
+            for (let input of currentInputs) {
+                // Check for empty required fields
+                if (!input.value || (input.type === 'hidden' && !input.value)) {
+                    if (input.type === 'hidden') alert("Please select the number of bedrooms.");
+                    else input.reportValidity();
+                    return false;
+                }
+            }
+
+            // Specific validation for email only on Step 1 (index 0)
+            if (index === 0 && !validateEmailFormat(emailInput.value)) {
+                if (emailError) {
+                    emailError.innerText = 'Please enter a valid email address (e.g., user@domain.com).';
+                    emailInput.focus();
+                } else {
+                    alert('Please enter a valid email address.');
+                }
+                return false;
+            }
+            return true;
+        }
+
         function validateEmailFormat(email) {
             const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
             return emailRegex.test(email);
         }
 
-        // --- STEP NAVIGATION LOGIC ---
         async function nextStep(index) {
-            const currentInputs = steps[index].querySelectorAll("input[required], select[required]");
-            const emailInput = document.getElementById('email');
-            const emailError = document.getElementById('email-error');
+            if (!validateStepInputs(index)) return;
 
-            if (emailError) emailError.innerText = '';
-
-            for (let input of currentInputs) {
-                if (!input.value) {
-                    if (input.type === 'hidden') alert("Please select the number of bedrooms.");
-                    else input.reportValidity();
+            // Step 2 (index 1) to Step 3 Transition: Perform Initial Submission
+            if (index === 1 && !submittedRowId) {
+                await initialSubmission();
+                if (!submittedRowId) {
+                    // Failed to save initial data, stop transition
+                    alert("Could not save initial data. Please check your connection.");
                     return;
                 }
             }
+            
+            // If the quote was previously run, force the user to click Get Quote again
+            document.getElementById('finalSubmitButton').style.display = 'none';
+            document.getElementById('getQuoteButton').style.display = 'block';
+            document.getElementById('quoteDisplay').style.display = 'none';
 
-            if (index === 0) {
-                if (!validateEmailFormat(emailInput.value)) {
-                    if (emailError) {
-                        emailError.innerText = 'Please enter a valid email address (e.g., user@domain.com).';
-                        emailInput.focus();
-                    }
-                    return;
-                }
-            }
-
-            if (index === 1) {
-                // When leaving Step 2 to enter Step 3, submit the basic data first.
-                // This call must succeed before moving on.
-                try {
-                    await submitBasicData();
-                } catch(e) {
-                    // If basic data submission fails, stop navigation
-                    return;
-                }
-            }
 
             switchStep(currentStep + 1);
         }
@@ -685,175 +729,21 @@
         function prevStep(targetIndex) {
             switchStep(targetIndex - 1);
         }
+        
+        // --- Form Interaction Handlers ---
 
-        // --- DATA COLLECTION FUNCTIONS ---
-        const getVal = (id) => {
-            const el = document.getElementById(id);
-            return el ? (el.type === 'checkbox' ? el.checked : el.value) : false;
-        };
-
-        function collectBasicData() {
-            return {
-                name: getVal('name'),
-                phone: "'" + getVal('phone'), // prepend ' to preserve leading zeros
-                email: getVal('email'),
-                accommodation: getVal('accommodation'),
-                stage: getVal('stage'),
-                city: getVal('city'),
-                area: getVal('area'),
-                rooms: getVal('rooms')
-            };
-        }
-
-        function collectFeatureData() {
-            const data = {
-                rowId: getVal('trackingRowId'),
-                livingCurtains: getVal('livingCurtains'),
-                livingAC: getVal('livingAC'),
-                livingSwitch: getVal('livingSwitch'),
-                smartLockAccessControl: getVal('smartLockAccessControl'),
-                outdoorLawn: getVal('outdoorLawn'),
-                swimmingPool: getVal('swimmingPool'),
-                motionSensor: getVal('motionSensor'),
-                voiceCommand: getVal('voiceCommand'),
-                securitySurveillance: getVal('securitySurveillance'),
-                wifiManagement: getVal('wifiManagement'),
-                quotePrice: document.getElementById('quotePrice').value
-            };
-
-            for (let i = 1; i <= 5; i++) {
-                data[`room${i}Curtain`] = getVal(`room${i}Curtain`);
-                data[`room${i}AC`] = getVal(`room${i}AC`);
-                data[`room${i}Light`] = getVal(`room${i}Light`);
-            }
-            return data;
-        }
-
-        // --- SUBMISSION STEP 1: Save basic info and get an ID (Row ID) ---
-        async function submitBasicData() {
-            const basicData = collectBasicData();
-            
-            try {
-                // Using mode: 'cors' and Content-Type for clean JSON response handling
-                const response = await fetch(SCRIPT_URL + "?function=saveBasicDetails", {
-                    method: "POST", 
-                    body: JSON.stringify(basicData), 
-                    mode: 'cors', 
-                    headers: {'Content-Type': 'application/json'}
-                });
-                const result = await response.json();
-                
-                if (result.status === "success" && result.rowId) {
-                    document.getElementById('trackingRowId').value = result.rowId;
-                    console.log("Basic data saved. Tracking Row ID:", result.rowId);
-                } else {
-                    // This handles server-side error return (e.g., if JSON parsing failed)
-                    throw new Error("Server failed to return a valid tracking ID: " + result.message);
-                }
-            } catch (err) {
-                console.error("Basic Data Submission Failed:", err);
-                alert("Error saving basic details. Please check your form and network connection.");
-                throw err; 
-            }
-        }
-
-        // --- QUOTE CALCULATION LOGIC ---
-        function calculateQuote() {
-            const featureData = collectFeatureData();
-            let total = BASE_PRICE;
-            let roomCount = parseInt(getVal('rooms') || 0);
-
-            // Add static feature prices
-            for (const feature in FEATURE_PRICES) {
-                if (featureData[feature]) {
-                    total += FEATURE_PRICES[feature];
-                }
-            }
-
-            // Add room feature prices
-            for (let i = 1; i <= roomCount; i++) {
-                if (featureData[`room${i}Curtain`]) total += ROOM_FEATURE_PRICE_DEFAULT.curtain;
-                if (featureData[`room${i}AC`]) total += ROOM_FEATURE_PRICE_DEFAULT.ac;
-                if (featureData[`room${i}Light`]) total += ROOM_FEATURE_PRICE_DEFAULT.light;
-            }
-
-            // Display and save the price
-            const priceDisplay = document.getElementById('quotePriceDisplay');
-            const priceHidden = document.getElementById('quotePrice');
-            
-            priceDisplay.innerText = `AED ${total.toLocaleString('en-US')}`;
-            priceHidden.value = total;
-
-            // Update buttons
-            document.querySelector('.btn-next').innerText = 'Recalculate Quote';
-            document.getElementById('finalSubmitBtn').style.display = 'inline-block';
-
-            // Visual feedback
-            priceDisplay.classList.add('updated');
-            setTimeout(() => priceDisplay.classList.remove('updated'), 500);
-            console.log("Quote Calculated:", total);
-        }
-
-        // --- FINAL SUBMISSION (STEP 3) ---
-        document.getElementById("surveyForm").addEventListener("submit", async (e) => {
-            e.preventDefault();
-            const btn = document.getElementById('finalSubmitBtn');
-            const originalBtnText = btn.innerHTML;
-            
-            if (!getVal('trackingRowId')) {
-                alert("Error: Basic details were not saved. Please go back to Step 1 & 2.");
-                return;
-            }
-            
-            if (document.getElementById('quotePrice').value === '' || document.getElementById('quotePrice').value === '0') {
-                 calculateQuote(); 
-            }
-            
-            btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Finalizing...';
-            
-            const featureData = collectFeatureData();
-
-            try {
-                // Call the main doPost function (which calls updateQuote)
-                const response = await fetch(SCRIPT_URL, {
-                    method: "POST", 
-                    body: JSON.stringify(featureData), 
-                    mode: 'cors', // Use 'cors' now that we have the CORS header set on the server
-                    headers: {'Content-Type': 'application/json'}
-                });
-                
-                const result = await response.json();
-
-                if (result.status === "update_success") {
-                    document.getElementById("popup").style.display = "flex";
-                } else {
-                    console.error("Final Submission Failed (Server Error):", result.message);
-                    alert("Final submission failed due to a server error. Check logs.");
-                }
-            } catch (err) {
-                console.error("Final Submission Failed (Network Error):", err);
-                alert("Submission failed. Please check your network connection.");
-            } finally {
-                btn.innerHTML = originalBtnText;
-            }
-        });
-
-        // --- UTILITY FUNCTIONS (Element handlers) ---
         function selectNumber(element, hiddenInputId) {
             const parent = element.parentElement;
             const hiddenInput = document.getElementById(hiddenInputId);
             const siblings = parent.getElementsByClassName('num-box');
             for (let sib of siblings) sib.classList.remove('selected');
             element.classList.add('selected');
-            hiddenInput.value = element.innerText;
+            hiddenInput.value = element.getAttribute('data-value');
+
+            resetQuoteState(); 
 
             if (hiddenInputId === 'rooms') {
-                generateRoomOptions(parseInt(element.innerText));
-                // Reset quote calculation when room count changes
-                document.getElementById('quotePriceDisplay').innerText = '--';
-                document.getElementById('quotePrice').value = '';
-                document.querySelector('.btn-next').innerText = 'Get Quote';
-                document.getElementById('finalSubmitBtn').style.display = 'none';
+                generateRoomOptions(parseInt(hiddenInput.value));
             }
         }
 
@@ -862,12 +752,16 @@
             const checkboxId = visualElement.getAttribute('data-checkbox-id');
             const checkbox = document.getElementById(checkboxId);
             if (checkbox) checkbox.checked = visualElement.classList.contains('selected');
-
-            // When a tile is toggled, reset quote and allow recalculation
-            document.getElementById('quotePriceDisplay').innerText = '--';
-            document.getElementById('quotePrice').value = '';
-            document.querySelector('.btn-next').innerText = 'Get Quote';
-            document.getElementById('finalSubmitBtn').style.display = 'none';
+            
+            resetQuoteState();
+        }
+        
+        function resetQuoteState() {
+            document.getElementById('finalQuotePrice').value = '';
+            document.getElementById('quotePrice').innerText = '--';
+            document.getElementById('quoteDisplay').style.display = 'none';
+            document.getElementById('finalSubmitButton').style.display = 'none';
+            document.getElementById('getQuoteButton').style.display = 'block';
         }
 
         function generateRoomOptions(count) {
@@ -889,12 +783,205 @@
                 container.appendChild(roomDiv);
             }
         }
+        
+        // --- Server Interaction Functions ---
+
+        /**
+         * Step 1: Submits Step 1 & 2 data to create the row in the sheet.
+         */
+        async function initialSubmission() {
+            const btn = steps[1].querySelector(".btn-next");
+            const originalBtnText = btn.innerHTML;
+            btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i>';
+
+            try {
+                const data = getFormData('initial');
+                
+                // Use the main doPost URL
+                const response = await fetch(webAppUrl, { 
+                    method: "POST",
+                    body: JSON.stringify(data),
+                    headers: { 'Content-Type': 'application/json' },
+                    mode: 'cors'
+                });
+                
+                // Note: If using mode: 'no-cors' (legacy approach), you can't read response.
+                // Assuming modern 'cors' deployment for reliable response.
+                const result = await response.json();
+
+                if (result.status === "success" && result.submissionType === "initial") {
+                    submittedRowId = result.row;
+                } else {
+                    throw new Error(result.message || 'Initial save failed.');
+                }
+            } catch (err) {
+                console.error("Initial Submission Error:", err);
+                submittedRowId = null;
+            } finally {
+                btn.innerHTML = originalBtnText;
+            }
+        }
+        
+        /**
+         * Step 2: Requests a quote based on current Step 1, 2, and 3 selections.
+         */
+        async function getQuote() {
+            if (!validateStepInputs(2)) return;
+            
+            const btn = document.getElementById('getQuoteButton');
+            const originalBtnText = btn.innerHTML;
+            btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Calculating...';
+
+            try {
+                // If the user refreshed or jumped directly to step 3 and initial data wasn't loaded
+                if (!submittedRowId) {
+                    await initialSubmission(); // Try to save initial data now
+                    if (!submittedRowId) throw new Error("Could not save initial data before quoting.");
+                }
+                
+                const quoteData = getFormData('quote'); 
+                
+                // Call the specific GAS function using the ?path= parameter (if deployed as a single endpoint)
+                const response = await fetch(webAppUrl + '?path=getQuoteEndpoint', { 
+                    method: "POST",
+                    body: JSON.stringify(quoteData),
+                    headers: { 'Content-Type': 'application/json' },
+                    mode: 'cors'
+                });
+                
+                const result = await response.json();
+
+                if (result.status === "success" && result.quote) {
+                    // Format the price with currency
+                    const price = parseFloat(result.quote).toLocaleString('en-US', { style: 'currency', currency: 'AED', minimumFractionDigits: 0 });
+                    document.getElementById('quotePrice').innerText = price;
+                    document.getElementById('finalQuotePrice').value = price; 
+                    
+                    document.getElementById('quoteDisplay').style.display = 'block';
+                    document.getElementById('finalSubmitButton').style.display = 'block';
+                    btn.style.display = 'none';
+                } else {
+                    throw new Error(result.message || 'Quote calculation failed.');
+                }
+            } catch (err) {
+                console.error("Quote Error:", err);
+                alert("Could not get quote. Please try again. " + err.message);
+                resetQuoteState();
+            } finally {
+                if(document.getElementById('getQuoteButton').style.display !== 'none') {
+                    btn.innerHTML = originalBtnText;
+                }
+            }
+        }
+
+        /**
+         * Step 3: Submits ALL data (Step 1, 2, 3, and Quote) to update the sheet row.
+         */
+        document.getElementById("surveyForm").addEventListener("submit", async (e) => {
+            e.preventDefault();
+            
+            if (!submittedRowId) {
+                alert("Error: Initial data was not saved. Cannot finalize. Please try refreshing or starting from Step 1.");
+                return;
+            }
+            if (!document.getElementById('finalQuotePrice').value) {
+                alert("Please click 'Get Quote' and wait for the price before finalizing.");
+                return;
+            }
+            
+            const btn = document.getElementById('finalSubmitButton');
+            const originalBtnText = btn.innerHTML;
+            btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Finalizing...';
+
+            try {
+                const data = getFormData('final'); // Gets ALL form data and the row ID
+                
+                const response = await fetch(webAppUrl, {
+                    method: "POST",
+                    body: JSON.stringify(data),
+                    headers: { 'Content-Type': 'application/json' },
+                    mode: 'cors'
+                });
+                
+                const result = await response.json();
+
+                if (result.status === "success") {
+                    document.getElementById("popup").style.display = "flex";
+                } else {
+                    throw new Error(result.message || 'Final submission failed.');
+                }
+
+            } catch (err) {
+                console.error("Final Submission Error:", err);
+                alert("Final submission failed. Please try again. " + err.message);
+            } finally {
+                btn.innerHTML = originalBtnText;
+            }
+        });
 
         function closePopup() {
             location.reload();
         }
 
-        window.onload = () => updateProgress(0);
+        // --- Initialization on Load ---
+        
+        function populateForm(data) {
+            document.getElementById('name').value = data.name || '';
+            // Phone data is stored with a leading ' in the spreadsheet, remove it for the input
+            document.getElementById('phone').value = data.phone ? (data.phone.startsWith("'") ? data.phone.substring(1) : data.phone) : ''; 
+            document.getElementById('email').value = data.email || '';
+            document.getElementById('accommodation').value = data.accommodation || '';
+            document.getElementById('stage').value = data.stage || '';
+            document.getElementById('city').value = data.city || '';
+            document.getElementById('area').value = data.area || '';
+            
+            if (data.rooms) {
+                document.getElementById('rooms').value = data.rooms;
+                const numBox = document.querySelector(`#bedroomOptions .num-box[data-value='${data.rooms}']`);
+                if (numBox) numBox.classList.add('selected');
+                generateRoomOptions(data.rooms);
+            }
+            
+            // This is crucial for floating the labels of the pre-filled fields
+            document.querySelectorAll('input:not([type="hidden"]), select').forEach(el => {
+                // Manually trigger the effect since we set the value programmatically
+                if (el.value) {
+                    el.dispatchEvent(new Event('change')); 
+                }
+            });
+        }
+        
+        async function init() {
+            updateProgress(0); 
+            
+            // Use google.script.run to call the Apps Script server function
+            if (typeof google !== 'undefined' && google.script && google.script.run) {
+                google.script.run.withSuccessHandler(populateInitialData).getInitialData();
+            } else {
+                console.warn("google.script.run not available. Ensure this is deployed as a GAS Web App.");
+            }
+        }
+        
+        function populateInitialData(data) {
+            if (data && data.row) {
+                submittedRowId = data.row;
+                populateForm(data);
+                
+                // Skip to Step 3 (index 2)
+                switchStep(2); 
+                
+                // Update header text to reflect the continuation
+                const h1 = document.querySelector('h1');
+                const subtitle = document.querySelector('.subtitle');
+                if (h1) h1.innerText = 'Refine Your Smart Home';
+                if (subtitle) subtitle.innerText = 'Continue Configuration';
+                
+                // Optional: Provide visual feedback
+                console.log('Welcome back! Personal details loaded.');
+            }
+        }
+        
+        window.onload = init;
     </script>
 </body>
 </html>
