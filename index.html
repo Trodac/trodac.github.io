@@ -2,11 +2,10 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Trodac Smart Survey</title>
+    <title>Trodac Smart Home Survey</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@300;400;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-
     <style>
         :root {
             --bg-dark: #050914;
@@ -18,12 +17,7 @@
             --glass-border: rgba(255, 255, 255, 0.08);
             --input-bg: rgba(255, 255, 255, 0.03);
         }
-
-        * {
-            box-sizing: border-box;
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-        }
-
+        * { box-sizing: border-box; transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); }
         body {
             margin: 0;
             font-family: 'Manrope', sans-serif;
@@ -35,953 +29,585 @@
             align-items: center;
             overflow-x: hidden;
         }
-
         body::before {
             content: '';
             position: fixed;
-            top: -10%;
-            right: -10%;
-            width: 50vw;
-            height: 50vw;
+            top: -10%; right: -10%;
+            width: 50vw; height: 50vw;
             background: var(--trodac-copper);
             filter: blur(180px);
             opacity: 0.15;
             z-index: -1;
             animation: breathe 8s infinite alternate;
         }
-
-        @keyframes breathe {
-            0% {
-                opacity: 0.1;
-            }
-            100% {
-                opacity: 0.2;
-            }
-        }
-
-        .navbar {
-            width: 100%;
-            padding: 30px 50px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        .brand {
-            font-size: 28px;
-            font-weight: 800;
-            letter-spacing: -1px;
-            color: white;
-        }
-
+        @keyframes breathe { 0% { opacity: 0.1; } 100% { opacity: 0.2; } }
+        .navbar { width: 100%; padding: 30px 50px; display: flex; justify-content: space-between; align-items: center; }
+        .brand { font-size: 28px; font-weight: 800; letter-spacing: -1px; color: white; }
         .container {
-            width: 90%;
-            max-width: 750px;
-            margin: 20px auto;
-            background: var(--card-bg);
-            backdrop-filter: blur(24px);
+            width: 90%; max-width: 750px; margin: 20px auto;
+            background: var(--card-bg); backdrop-filter: blur(24px);
             -webkit-backdrop-filter: blur(24px);
-            border: 1px solid var(--glass-border);
-            border-radius: 24px;
-            padding: 50px;
-            box-shadow: 0 30px 60px -10px rgba(0, 0, 0, 0.6);
-            position: relative;
-            overflow: hidden;
+            border: 1px solid var(--glass-border); border-radius: 24px;
+            padding: 50px; box-shadow: 0 30px 60px -10px rgba(0, 0, 0, 0.6);
+            position: relative; overflow: hidden;
         }
-
-        h1 {
-            font-size: 36px;
-            font-weight: 700;
-            margin: 0 0 10px 0;
-            color: white;
+        h1 { font-size: 36px; font-weight: 700; margin: 0 0 10px 0; color: white; }
+        .subtitle { color: var(--trodac-copper); font-size: 13px; font-weight: 700; text-transform: uppercase; letter-spacing: 2px; display: block; margin-bottom: 30px; }
+        .progress-container { display: flex; gap: 8px; margin-bottom: 40px; }
+        .progress-step { flex: 1; height: 4px; background: rgba(255, 255, 255, 0.1); border-radius: 2px; }
+        .progress-step.active { background: var(--trodac-copper); box-shadow: 0 0 15px var(--trodac-copper-glow); }
+        .progress-step.completed { background: #10b981; }
+        .step { display: none; animation: slideUp 0.5s cubic-bezier(0.2, 0.8, 0.2, 1); }
+        .step.active { display: block; }
+        @keyframes slideUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+        .input-group { position: relative; margin-bottom: 24px; }
+        input, select {
+            width: 100%; padding: 18px 20px; background: var(--input-bg);
+            border: 1px solid var(--glass-border); border-radius: 12px;
+            color: white; font-size: 16px; outline: none; font-family: 'Manrope', sans-serif;
         }
-
-        .subtitle {
-            color: var(--trodac-copper);
-            font-size: 13px;
-            font-weight: 700;
-            text-transform: uppercase;
-            letter-spacing: 2px;
-            display: block;
-            margin-bottom: 30px;
-        }
-
-        .progress-container {
-            display: flex;
-            gap: 8px;
-            margin-bottom: 40px;
-        }
-
-        .progress-step {
-            flex: 1;
-            height: 4px;
-            background: rgba(255, 255, 255, 0.1);
-            border-radius: 2px;
-        }
-
-        .progress-step.active {
-            background: var(--trodac-copper);
-            box-shadow: 0 0 15px var(--trodac-copper-glow);
-        }
-
-        .progress-step.completed {
-            background: #10b981;
-        }
-
-        .step {
-            display: none;
-            animation: slideUp 0.5s cubic-bezier(0.2, 0.8, 0.2, 1);
-        }
-
-        .step.active {
-            display: block;
-        }
-
-        @keyframes slideUp {
-            from {
-                opacity: 0;
-                transform: translateY(20px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-
-        .input-group {
-            position: relative;
-            margin-bottom: 24px;
-        }
-
-        input,
-        select {
-            width: 100%;
-            padding: 18px 20px;
-            background: var(--input-bg);
-            border: 1px solid var(--glass-border);
-            border-radius: 12px;
-            color: white;
-            font-size: 16px;
-            outline: none;
-            font-family: 'Manrope', sans-serif;
-        }
-
         label {
-            position: absolute;
-            left: 20px;
-            top: 18px;
-            color: var(--text-muted);
-            font-size: 15px;
-            pointer-events: none;
-            transition: 0.25s ease;
+            position: absolute; left: 20px; top: 18px; color: var(--text-muted);
+            font-size: 15px; pointer-events: none; transition: 0.25s ease;
         }
-
-        input:focus,
-        select:focus {
-            border-color: var(--trodac-copper);
-            background: rgba(198, 124, 83, 0.05);
-            box-shadow: 0 0 0 4px rgba(198, 124, 83, 0.1);
+        input:focus, select:focus { border-color: var(--trodac-copper); background: rgba(198, 124, 83, 0.05); box-shadow: 0 0 0 4px rgba(198, 124, 83, 0.1); }
+        input:focus~label, input:not(:placeholder-shown)~label,
+        select:focus~label, select:valid~label {
+            top: -10px; left: 12px; font-size: 12px; color: var(--trodac-copper);
+            font-weight: 700; background: #0f172a; padding: 0 6px; border-radius: 4px;
         }
-
-        input:focus~label,
-        input:not(:placeholder-shown)~label,
-        select:focus~label,
-        select:valid~label {
-            top: -10px;
-            left: 12px;
-            font-size: 12px;
-            color: var(--trodac-copper);
-            font-weight: 700;
-            background: #0f172a;
-            padding: 0 6px;
-            border-radius: 4px;
-        }
-
         select {
             appearance: none;
             background-image: url("data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22292.4%22%20height%3D%22292.4%22%3E%3Cpath%20fill%3D%22%23c67c53%22%20d%3D%22M287%2069.4a17.6%2017.6%200%200%200-13-5.4H18.4c-5%200-9.3%201.8-12.9%205.4A17.6%2017.6%200%200%200%200%2082.2c0%205%201.8%209.3%205.4%2012.9l128%20127.9c3.6%203.6%207.8%205.4%2012.8%205.4s9.2-1.8%2012.8-5.4L287%2095c3.5-3.5%205.4-7.8%205.4-12.8%200-5-1.9-9.2-5.5-12.8z%22%2F%3E%3C%2Fsvg%3E");
-            background-repeat: no-repeat;
-            background-position: right 20px center;
-            background-size: 10px;
+            background-repeat: no-repeat; background-position: right 20px center; background-size: 10px;
         }
-
-        .grid-2 {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 20px;
-        }
-
-        .number-selector-container {
-            margin-bottom: 25px;
-        }
-
-        .number-selector-label {
-            display: block;
-            color: var(--trodac-copper);
-            font-size: 12px;
-            font-weight: 700;
-            margin-bottom: 12px;
-            letter-spacing: 1px;
-        }
-
-        .number-options {
-            display: flex;
-            gap: 10px;
-            flex-wrap: wrap;
-        }
-
+        .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+        .number-selector-container { margin-bottom: 25px; }
+        .number-selector-label { display: block; color: var(--trodac-copper); font-size: 12px; font-weight: 700; margin-bottom: 12px; letter-spacing: 1px; }
+        .number-options { display: flex; gap: 10px; flex-wrap: wrap; }
         .num-box {
-            flex: 1;
-            min-width: 45px;
-            height: 50px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            background: var(--input-bg);
-            border: 1px solid var(--glass-border);
-            border-radius: 12px;
-            cursor: pointer;
-            font-weight: 600;
-            font-size: 16px;
-            color: var(--text-muted);
-            transition: 0.2s;
+            flex: 1; min-width: 45px; height: 50px; display: flex;
+            align-items: center; justify-content: center;
+            background: var(--input-bg); border: 1px solid var(--glass-border);
+            border-radius: 12px; cursor: pointer; font-weight: 600;
+            font-size: 16px; color: var(--text-muted); transition: 0.2s;
         }
-
-        .num-box:hover {
-            background: rgba(255, 255, 255, 0.05);
-            border-color: rgba(255, 255, 255, 0.2);
-        }
-
+        .num-box:hover { background: rgba(255, 255, 255, 0.05); border-color: rgba(255, 255, 255, 0.2); }
         .num-box.selected {
-            background: var(--trodac-copper);
-            color: white;
-            box-shadow: 0 5px 15px var(--trodac-copper-glow);
-            border-color: var(--trodac-copper);
+            background: var(--trodac-copper); color: white;
+            box-shadow: 0 5px 15px var(--trodac-copper-glow); border-color: var(--trodac-copper);
             transform: translateY(-2px);
         }
-
-        .tile-grid {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 15px;
-            margin-top: 15px;
-            margin-bottom: 25px;
-        }
-
+        .tile-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 15px; margin-top: 15px; margin-bottom: 25px; }
         .card-visual {
-            height: 100%;
-            width: 100%;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            background: var(--input-bg);
-            border: 1px solid var(--glass-border);
-            border-radius: 16px;
-            cursor: pointer;
-            aspect-ratio: 1 / 0.85;
-            text-align: center;
-            gap: 10px;
-            transition: 0.3s;
+            height: 100%; width: 100%; display: flex; flex-direction: column;
+            align-items: center; justify-content: center;
+            background: var(--input-bg); border: 1px solid var(--glass-border);
+            border-radius: 16px; cursor: pointer; aspect-ratio: 1 / 0.85;
+            text-align: center; gap: 10px; transition: 0.3s;
         }
-
-        .card-visual i {
-            font-size: 24px;
-            color: var(--text-muted);
-            transition: 0.3s;
-        }
-
-        .card-visual span {
-            font-size: 13px;
-            font-weight: 600;
-            color: var(--text-muted);
-        }
-
+        .card-visual i { font-size: 24px; color: var(--text-muted); transition: 0.3s; }
+        .card-visual span { font-size: 13px; font-weight: 600; color: var(--text-muted); }
         .card-visual.selected {
-            background: rgba(198, 124, 83, 0.15);
-            border-color: var(--trodac-copper);
-            box-shadow: 0 10px 25px -5px rgba(198, 124, 83, 0.3);
-            transform: translateY(-3px);
+            background: rgba(198, 124, 83, 0.15); border-color: var(--trodac-copper);
+            box-shadow: 0 10px 25px -5px rgba(198, 124, 83, 0.3); transform: translateY(-3px);
         }
-
-        .card-visual.selected i {
-            color: var(--trodac-copper);
-            transform: scale(1.1);
-        }
-
-        .card-visual.selected span {
-            color: white;
-        }
-
+        .card-visual.selected i { color: var(--trodac-copper); transform: scale(1.1); }
+        .card-visual.selected span { color: white; }
         .room-header {
-            color: white;
-            font-size: 12px;
-            font-weight: 700;
-            text-transform: uppercase;
-            letter-spacing: 1.5px;
-            margin-top: 35px;
-            border-bottom: 1px solid var(--glass-border);
-            padding-bottom: 8px;
-            margin-bottom: 15px;
+            color: white; font-size: 12px; font-weight: 700; text-transform: uppercase;
+            letter-spacing: 1.5px; margin-top: 35px; border-bottom: 1px solid var(--glass-border);
+            padding-bottom: 8px; margin-bottom: 15px;
         }
-
-        .btn-container {
-            margin-top: 45px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
+        .btn-container { margin-top: 45px; display: flex; justify-content: space-between; align-items: center; }
         button {
-            padding: 16px 40px;
-            border-radius: 50px;
-            border: none;
-            font-size: 15px;
-            font-weight: 700;
-            cursor: pointer;
-            letter-spacing: 0.5px;
+            padding: 16px 40px; border-radius: 50px; border: none;
+            font-size: 15px; font-weight: 700; cursor: pointer; letter-spacing: 0.5px;
         }
-
-        .btn-next {
-            background: white;
-            color: #020617;
-            box-shadow: 0 10px 20px rgba(255, 255, 255, 0.1);
-        }
-
-        .btn-next:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 15px 30px rgba(255, 255, 255, 0.2);
-        }
-
-        .btn-submit {
-            background: var(--trodac-copper);
-            color: white;
-            box-shadow: 0 10px 25px rgba(198, 124, 83, 0.3);
-        }
-
-        .btn-submit:hover {
-            background: #d98d63;
-            transform: translateY(-2px);
-            box-shadow: 0 15px 35px rgba(198, 124, 83, 0.4);
-        }
-
-        .btn-back {
-            background: transparent;
-            color: var(--text-muted);
-            padding: 10px 20px;
-        }
-
-        .btn-back:hover {
-            color: white;
-        }
-
-        .popup {
-            position: fixed;
-            inset: 0;
-            backdrop-filter: blur(10px);
-            display: none;
-            align-items: center;
-            justify-content: center;
-            z-index: 100;
-        }
-
+        .btn-next { background: white; color: #020617; box-shadow: 0 10px 20px rgba(255, 255, 255, 0.1); }
+        .btn-next:hover { transform: translateY(-2px); box-shadow: 0 15px 30px rgba(255, 255, 255, 0.2); }
+        .btn-submit { background: var(--trodac-copper); color: white; box-shadow: 0 10px 25px rgba(198, 124, 83, 0.3); }
+        .btn-submit:hover { background: #d98d63; transform: translateY(-2px); box-shadow: 0 15px 35px rgba(198, 124, 83, 0.4); }
+        .btn-back { background: transparent; color: var(--text-muted); padding: 10px 20px; }
+        .btn-back:hover { color: white; }
+        .popup { position: fixed; inset: 0; backdrop-filter: blur(10px); display: none; align-items: center; justify-content: center; z-index: 100; }
         .popup-box {
-            background: #0f172a;
-            border: 1px solid var(--glass-border);
-            padding: 50px;
-            border-radius: 24px;
-            text-align: center;
-            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.8);
-            border-top: 4px solid var(--trodac-copper);
+            background: #0f172a; border: 1px solid var(--glass-border);
+            padding: 50px; border-radius: 24px; text-align: center;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.8); border-top: 4px solid var(--trodac-copper);
+            max-height: 80vh; overflow-y: auto;
         }
-
-        .popup h2 {
-            color: white;
-            font-size: 28px;
-            margin-bottom: 10px;
-        }
-
-        .popup p {
-            color: var(--text-muted);
-        }
-
-        /* Custom Email Error Styling */
-        #email-error {
-            color: #ff3333;
-            font-size: 13px;
-            margin-top: -15px;
-            margin-bottom: 20px;
-            display: block;
-            height: 16px;
-        }
-
+        .popup h2 { color: white; font-size: 28px; margin-bottom: 10px; }
+        .popup p { color: var(--text-muted); margin-bottom: 20px; }
+        .breakdown { text-align: left; margin-bottom: 20px; color: var(--text-white); }
+        .breakdown div { margin-bottom: 5px; }
+        #email-error { color: #ff3333; font-size: 13px; margin-top: -15px; margin-bottom: 20px; display: block; height: 16px; }
         @media(max-width: 600px) {
-            .container {
-                padding: 30px 20px;
-            }
-
-            .grid-2 {
-                grid-template-columns: 1fr;
-            }
-
-            .tile-grid {
-                grid-template-columns: repeat(2, 1fr);
-            }
+            .container { padding: 30px 20px; }
+            .grid-2 { grid-template-columns: 1fr; }
+            .tile-grid { grid-template-columns: repeat(2, 1fr); }
         }
     </style>
 </head>
-
 <body>
-
     <div class="navbar">
         <div class="brand">trodac.</div>
     </div>
-
     <div class="container">
         <span class="subtitle">Smart Home Configurator</span>
         <h1>Craft Your Space</h1>
-
         <div class="progress-container">
             <div class="progress-step active" id="p1"></div>
             <div class="progress-step" id="p2"></div>
             <div class="progress-step" id="p3"></div>
         </div>
 
-        <form id="surveyForm">
-
-            <div class="step active" id="step1">
-                <div class="input-group">
-                    <input type="text" id="name" placeholder=" " required>
-                    <label>Full Name</label>
-                </div>
-                <div class="input-group">
-                    <input type="tel" id="phone" placeholder=" " required>
-                    <label>Phone Number</label>
-                </div>
-                <div class="input-group">
-                    <input type="email" id="email" placeholder=" " required>
-                    <label>Email Address</label>
-                </div>
-                <span id="email-error"></span>
-
-                <div class="btn-container" style="justify-content: flex-end;">
-                    <button type="button" class="btn-next" onclick="nextStep(0)">Start <i class="fas fa-arrow-right"></i></button>
-                </div>
+        <div class="step active" id="step1">
+            <div class="input-group">
+                <input type="text" id="name" placeholder=" " required>
+                <label>Full Name</label>
             </div>
+            <div class="input-group">
+                <input type="tel" id="phone" placeholder=" " required>
+                <label>Phone Number</label>
+            </div>
+            <div class="input-group">
+                <input type="email" id="email" placeholder=" " required>
+                <label>Email Address</label>
+            </div>
+            <span id="email-error"></span>
+            <div class="btn-container" style="justify-content: flex-end;">
+                <button type="button" class="btn-next" onclick="nextStep(0)">Start <i class="fas fa-arrow-right"></i></button>
+            </div>
+        </div>
 
-            <div class="step" id="step2">
+        <div class="step" id="step2">
+            <div class="input-group">
+                <select id="accommodation" required>
+                    <option value="" disabled selected></option>
+                    <option>Apartment</option>
+                    <option>Villa</option>
+                    <option>Office Space</option>
+                    <option>Retail</option>
+                </select>
+                <label>Accommodation Type</label>
+            </div>
+            <div class="input-group">
+                <select id="stage" required>
+                    <option value="" disabled selected></option>
+                    <option>Under Construction</option>
+                    <option>Already Living In</option>
+                    <option>Renovation</option>
+                </select>
+                <label>Property Stage</label>
+            </div>
+            <div class="grid-2">
                 <div class="input-group">
-                    <select id="accommodation" required>
+                    <select id="city" required>
                         <option value="" disabled selected></option>
-                        <option>Apartment</option>
-                        <option>Villa</option>
-                        <option>Office Space</option>
-                        <option>Retail</option>
+                        <option>Dubai</option><option>Sharjah</option><option>Abu Dhabi</option>
+                        <option>Ajman</option><option>Ras Al Khaimah</option><option>Umm Al Quwain</option><option>Fujairah</option>
                     </select>
-                    <label>Accommodation Type</label>
+                    <label>City</label>
                 </div>
                 <div class="input-group">
-                    <select id="stage" required>
-                        <option value="" disabled selected></option>
-                        <option>Under Construction</option>
-                        <option>Already Living In</option>
-                        <option>Renovation</option>
-                    </select>
-                    <label>Property Stage</label>
-                </div>
-                <div class="grid-2">
-                    <div class="input-group">
-                        <select id="city" required>
-                            <option value="" disabled selected></option>
-                            <option>Dubai</option>
-                            <option>Sharjah</option>
-                            <option>Abu Dhabi</option>
-                            <option>Ajman</option>
-                            <option>Ras Al Khaimah</option>
-                            <option>Umm Al Quwain</option>
-                            <option>Fujairah</option>
-                        </select>
-                        <label>City</label>
-                    </div>
-                    <div class="input-group">
-                        <input type="text" id="area" placeholder=" ">
-                        <label>Area / District (Optional)</label>
-                    </div>
-                </div>
-                <div class="btn-container">
-                    <button type="button" class="btn-back" onclick="prevStep(1)">Back</button>
-                    <button type="button" class="btn-next" onclick="nextStep(1)">Next <i class="fas fa-arrow-right"></i></button>
+                    <input type="text" id="area" placeholder=" ">
+                    <label>Area / District (Optional)</label>
                 </div>
             </div>
+            <div class="btn-container">
+                <button type="button" class="btn-back" onclick="prevStep(1)">Back</button>
+                <button type="button" class="btn-next" onclick="nextStep(1)">Next <i class="fas fa-arrow-right"></i></button>
+            </div>
+        </div>
 
-            <div class="step" id="step3">
+        <div class="step" id="step3">
+            <div class="number-selector-container">
+                <span class="number-selector-label">LIVING ROOM FEATURES</span>
+            </div>
+            <div class="tile-grid">
+                <div class="card-visual" data-checkbox-id="livingCurtains" onclick="toggleTile(this)"><i class="fas fa-scroll"></i><span>Smart Curtains</span></div>
+                <div class="card-visual" data-checkbox-id="livingAC" onclick="toggleTile(this)"><i class="fas fa-wind"></i><span>Smart AC</span></div>
+                <div class="card-visual" data-checkbox-id="livingSwitch" onclick="toggleTile(this)"><i class="fas fa-lightbulb"></i><span>Smart Lights</span></div>
+            </div>
+            <input type="checkbox" id="livingCurtains" style="display:none;">
+            <input type="checkbox" id="livingAC" style="display:none;">
+            <input type="checkbox" id="livingSwitch" style="display:none;">
 
-                <div class="number-selector-container">
-                    <span class="number-selector-label">LIVING ROOM FEATURES</span>
+            <div class="number-selector-container">
+                <span class="number-selector-label">HOW MANY BEDROOMS?</span>
+                <div class="number-options" id="bedroomOptions">
+                    <div class="num-box" onclick="selectNumber(this, 'rooms')">1</div>
+                    <div class="num-box" onclick="selectNumber(this, 'rooms')">2</div>
+                    <div class="num-box" onclick="selectNumber(this, 'rooms')">3</div>
+                    <div class="num-box" onclick="selectNumber(this, 'rooms')">4</div>
+                    <div class="num-box" onclick="selectNumber(this, 'rooms')">5</div>
                 </div>
-                <div class="tile-grid">
-                    <div class="card-visual" data-checkbox-id="livingCurtains" onclick="toggleTile(this)"><i class="fas fa-scroll"></i><span>Smart Curtains</span></div>
-                    <div class="card-visual" data-checkbox-id="livingAC" onclick="toggleTile(this)"><i class="fas fa-wind"></i><span>Smart AC</span></div>
-                    <div class="card-visual" data-checkbox-id="livingSwitch" onclick="toggleTile(this)"><i class="fas fa-lightbulb"></i><span>Smart Lights</span></div>
-                </div>
-                <input type="checkbox" id="livingCurtains" style="display:none;">
-                <input type="checkbox" id="livingAC" style="display:none;">
-                <input type="checkbox" id="livingSwitch" style="display:none;">
-
-                <div class="number-selector-container">
-                    <span class="number-selector-label">HOW MANY BEDROOMS?</span>
-                    <div class="number-options" id="bedroomOptions">
-                        <div class="num-box" data-value="1" onclick="selectNumber(this, 'rooms')">1</div>
-                        <div class="num-box" data-value="2" onclick="selectNumber(this, 'rooms')">2</div>
-                        <div class="num-box" data-value="3" onclick="selectNumber(this, 'rooms')">3</div>
-                        <div class="num-box" data-value="4" onclick="selectNumber(this, 'rooms')">4</div>
-                        <div class="num-box" data-value="5" onclick="selectNumber(this, 'rooms')">5</div>
-                    </div>
-                    <input type="hidden" id="rooms" required>
-                </div>
-
-                <div id="dynamicRoomsContainer"></div>
-
-                <div class="number-selector-container" style="margin-top: 40px;">
-                    <span class="number-selector-label">ADDITIONAL FEATURES</span>
-                </div>
-                <div class="tile-grid">
-                    <div class="card-visual" data-checkbox-id="smartLockAccessControl" onclick="toggleTile(this)"><i class="fas fa-door-closed"></i><span>Smart Lock & Access Control</span></div>
-                    <div class="card-visual" data-checkbox-id="outdoorLawn" onclick="toggleTile(this)"><i class="fas fa-leaf"></i><span>Outdoor Lawn</span></div>
-                    <div class="card-visual" data-checkbox-id="swimmingPool" onclick="toggleTile(this)"><i class="fas fa-swimmer"></i><span>Swimming Pool</span></div>
-                    <div class="card-visual" data-checkbox-id="motionSensor" onclick="toggleTile(this)"><i class="fas fa-rss"></i><span>Motion Sensor</span></div>
-                    <div class="card-visual" data-checkbox-id="voiceCommand" onclick="toggleTile(this)"><i class="fas fa-microphone"></i><span>Voice Command</span></div>
-                    <div class="card-visual" data-checkbox-id="securitySurveillance" onclick="toggleTile(this)"><i class="fas fa-video"></i><span>Security & Surveillance</span></div>
-                    <div class="card-visual" data-checkbox-id="wifiManagement" onclick="toggleTile(this)"><i class="fas fa-wifi"></i><span>Wifi Management</span></div>
-                </div>
-
-                <input type="checkbox" id="smartLockAccessControl" style="display:none;">
-                <input type="checkbox" id="outdoorLawn" style="display:none;">
-                <input type="checkbox" id="swimmingPool" style="display:none;">
-                <input type="checkbox" id="motionSensor" style="display:none;">
-                <input type="checkbox" id="voiceCommand" style="display:none;">
-                <input type="checkbox" id="securitySurveillance" style="display:none;">
-                <input type="checkbox" id="wifiManagement" style="display:none;">
-
-                <div id="quoteDisplay" style="text-align: center; margin-top: 40px; padding: 20px; border: 1px dashed var(--glass-border); border-radius: 12px; display: none;">
-                    <p style="color: var(--text-muted); font-weight: 600; margin: 0 0 5px 0;">Estimated Smart Home Quote</p>
-                    <h2 id="quotePrice" style="color: var(--trodac-copper); font-size: 38px; margin: 0; font-weight: 700;">--</h2>
-                    <p style="color: var(--text-muted); font-style: italic; font-size: 13px;">(Quote is a non-binding estimate.)</p>
-                </div>
-                <input type="hidden" id="finalQuotePrice">
-
-                <div class="btn-container">
-                    <button type="button" class="btn-back" onclick="prevStep(2)">Back</button>
-                    <button type="button" class="btn-submit" id="getQuoteButton" onclick="getQuote()">Get Quote <i class="fas fa-calculator"></i></button>
-                    <button type="submit" class="btn-submit" id="finalSubmitButton" style="display:none;">Finalize Request</button>
-                </div>
+                <input type="hidden" id="rooms" required>
             </div>
 
-        </form>
+            <div id="dynamicRoomsContainer"></div>
+
+            <div class="number-selector-container" style="margin-top: 40px;">
+                <span class="number-selector-label">ADDITIONAL FEATURES</span>
+            </div>
+            <div class="tile-grid">
+                <div class="card-visual" data-checkbox-id="smartLockAccessControl" onclick="toggleTile(this)"><i class="fas fa-door-closed"></i><span>Smart Lock & Access Control</span></div>
+                <div class="card-visual" data-checkbox-id="outdoorLawn" onclick="toggleTile(this)"><i class="fas fa-leaf"></i><span>Outdoor Lawn</span></div>
+                <div class="card-visual" data-checkbox-id="swimmingPool" onclick="toggleTile(this)"><i class="fas fa-swimmer"></i><span>Swimming Pool</span></div>
+                <div class="card-visual" data-checkbox-id="motionSensor" onclick="toggleTile(this)"><i class="fas fa-rss"></i><span>Motion Sensor</span></div>
+                <div class="card-visual" data-checkbox-id="voiceCommand" onclick="toggleTile(this)"><i class="fas fa-microphone"></i><span>Voice Command</span></div>
+                <div class="card-visual" data-checkbox-id="securitySurveillance" onclick="toggleTile(this)"><i class="fas fa-video"></i><span>Security & Surveillance</span></div>
+                <div class="card-visual" data-checkbox-id="wifiManagement" onclick="toggleTile(this)"><i class="fas fa-wifi"></i><span>Wifi Management</span></div>
+            </div>
+            <input type="checkbox" id="smartLockAccessControl" style="display:none;">
+            <input type="checkbox" id="outdoorLawn" style="display:none;">
+            <input type="checkbox" id="swimmingPool" style="display:none;">
+            <input type="checkbox" id="motionSensor" style="display:none;">
+            <input type="checkbox" id="voiceCommand" style="display:none;">
+            <input type="checkbox" id="securitySurveillance" style="display:none;">
+            <input type="checkbox" id="wifiManagement" style="display:none;">
+
+
+
+            <div class="btn-container">
+                <button type="button" class="btn-back" onclick="prevStep(2)">Back</button>
+                <button type="button" class="btn-next" id="getQuoteBtn" onclick="getQuote()">Get Quote</button>
+            </div>
+            
+                        <div class="number-selector-container" style="margin-top: 40px; text-align: center;">
+                <span class="number-selector-label">ESTIMATED QUOTE</span>
+                <div style="font-size: 48px; font-weight: 800; color: var(--trodac-copper); margin: 20px 0;" id="quoteDisplay">AED 0</div>
+                <p style="color: var(--text-muted); font-size: 14px;">Prices are indicative. Final proposal will be sent via email.</p>
+            </div>
+        </div>
     </div>
 
     <div class="popup" id="popup">
         <div class="popup-box">
             <div style="font-size: 50px; color: var(--trodac-copper); margin-bottom: 20px;"><i class="fas fa-check-circle"></i></div>
-            <h2>Received</h2>
-            <p>Your configuration and quote request has been finalized. We will craft your proposal shortly.</p>
-            <button onclick="closePopup()" class="btn-next" style="margin-top:20px;">Done</button>
+            <h2 id="popupTitle">Your Quote</h2>
+            <div id="breakdown" class="breakdown"></div>
+            <p>We will craft your proposal shortly.</p>
+            <button onclick="editConfig()" class="btn-next" style="margin-top:20px; margin-right: 15px;">Edit Configuration</button>
+            <button onclick="sendToWhatsApp()" class="btn-submit" style="margin-top:20px;">Receive Quote in WhatsApp</button>
         </div>
     </div>
 
     <script>
-        const steps = document.querySelectorAll(".step");
-        const progressSteps = document.querySelectorAll(".progress-step");
-        let currentStep = 0;
-        let submittedRowId = null; // Store the row ID for the final update
-        // !!! IMPORTANT: REPLACE THIS PLACEHOLDER URL WITH YOUR DEPLOYED GOOGLE APPS SCRIPT WEB APP URL !!!
-        const webAppUrl = "https://script.google.com/macros/s/AKfycbzsyVwNwDmECLAh6XvCkWgN5NUq_R87zR3RgLMeBMdeCYbB1wV3e4l4RwbFixSmBmd6Aw/exec";
+    // REPLACE THIS URL WITH YOUR ACTUAL DEPLOYED WEB APP URL
+    const WEB_APP_URL = "https://script.google.com/macros/s/AKfycbwqFfvnboZqVdyCD66AKwiVsPmN60GsQv03IghDpmgRBU03KzXK85VHcGB7IGScCmnvag/exec";
 
-        // --- Utility Functions ---
+    const steps = document.querySelectorAll(".step");
+    const progressSteps = document.querySelectorAll(".progress-step");
+    let currentStep = 0;
+    let currentQuoteDetails = null;
+    let priceShown = false; // Track if price has been revealed
 
+    // Pricing
+    const prices = {
+        livingCurtains: 1500,
+        livingAC: 600,
+        livingSwitch: 650,
+        roomCurtain: 900,
+        roomAC: 600,
+        roomLight: 800,
+        smartLockAccessControl: 3000,
+        outdoorLawn: 450,
+        swimmingPool: 1000,
+        motionSensor: 350,
+        voiceCommand: 750,
+        securitySurveillance: 3500,
+        wifiManagement: 2850,
+        zigbee: 150
+    };
+
+    function updateProgress(stepIndex) {
+        progressSteps.forEach((p, i) => {
+            p.classList.remove("active", "completed");
+            if (i < stepIndex) p.classList.add("completed");
+            else if (i === stepIndex) p.classList.add("active");
+        });
+    }
+
+    function switchStep(targetIndex) {
+        steps[currentStep].style.opacity = '0';
+        steps[currentStep].style.transform = 'translateY(-10px)';
+        steps[currentStep].classList.remove("active");
+        setTimeout(() => {
+            currentStep = targetIndex;
+            steps[currentStep].classList.add("active");
+            updateProgress(currentStep);
+            steps[currentStep].style.opacity = '';
+            steps[currentStep].style.transform = '';
+        }, 300);
+    }
+
+    function validateEmailFormat(email) {
+        const regex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        return regex.test(email);
+    }
+
+    function nextStep(index) {
+        const currentInputs = steps[index].querySelectorAll("input[required], select[required]");
+        const emailInput = document.getElementById('email');
+        const emailError = document.getElementById('email-error');
+        if (emailError) emailError.innerText = '';
+
+        for (let input of currentInputs) {
+            if (!input.value) {
+                if (input.type === 'hidden') alert("Please select the number of bedrooms.");
+                else input.reportValidity();
+                return;
+            }
+        }
+
+        if (index === 0) {
+            if (!validateEmailFormat(emailInput.value)) {
+                emailError.innerText = 'Please enter a valid email address (e.g., user@domain.com).';
+                emailInput.focus();
+                return;
+            }
+        }
+
+        if (index === 1) {
+            saveInitialData();
+        }
+
+        switchStep(currentStep + 1);
+    }
+
+    function prevStep(targetIndex) {
+        switchStep(targetIndex - 1);
+    }
+
+    async function saveInitialData() {
+        const getVal = (id) => document.getElementById(id)?.value || '';
+
+        const data = {
+            mode: "saveInitial",
+            name: getVal('name'),
+            phone: getVal('phone'),
+            email: getVal('email'),
+            accommodation: getVal('accommodation'),
+            stage: getVal('stage'),
+            city: getVal('city'),
+            area: getVal('area'),
+            rooms: getVal('rooms')
+        };
+
+        try {
+            await fetch(WEB_APP_URL, {
+                method: "POST",
+                body: JSON.stringify(data),
+                mode: 'no-cors'
+            });
+        } catch (err) {
+            console.error("Initial save failed", err);
+        }
+    }
+
+    function selectNumber(element, hiddenInputId) {
+        const parent = element.parentElement;
+        const hiddenInput = document.getElementById(hiddenInputId);
+        const siblings = parent.getElementsByClassName('num-box');
+        for (let sib of siblings) sib.classList.remove('selected');
+        element.classList.add('selected');
+        hiddenInput.value = element.innerText;
+        if (hiddenInputId === 'rooms') {
+            generateRoomOptions(parseInt(element.innerText));
+        }
+    }
+
+    function toggleTile(visualElement) {
+        visualElement.classList.toggle('selected');
+        const checkboxId = visualElement.getAttribute('data-checkbox-id');
+        const checkbox = document.getElementById(checkboxId);
+        if (checkbox) checkbox.checked = visualElement.classList.contains('selected');
+    }
+
+    function generateRoomOptions(count) {
+        const container = document.getElementById('dynamicRoomsContainer');
+        container.innerHTML = '';
+        for (let i = 1; i <= count; i++) {
+            const roomDiv = document.createElement('div');
+            roomDiv.innerHTML = `
+            <div class="room-header">ROOM ${i} CONFIGURATION</div>
+            <div class="tile-grid">
+                <div class="card-visual" data-checkbox-id="room${i}Curtain" onclick="toggleTile(this)"><i class="fas fa-scroll"></i><span>Curtains</span></div>
+                <div class="card-visual" data-checkbox-id="room${i}AC" onclick="toggleTile(this)"><i class="fas fa-wind"></i><span>AC</span></div>
+                <div class="card-visual" data-checkbox-id="room${i}Light" onclick="toggleTile(this)"><i class="fas fa-lightbulb"></i><span>Lights</span></div>
+            </div>
+            <input type="checkbox" id="room${i}Curtain" style="display:none;">
+            <input type="checkbox" id="room${i}AC" style="display:none;">
+            <input type="checkbox" id="room${i}Light" style="display:none;">
+            `;
+            container.appendChild(roomDiv);
+        }
+    }
+
+    function calculateQuote() {
+        let featuresTotal = 0;
+        const getVal = (id) => document.getElementById(id)?.checked || false;
+
+        if (getVal('livingCurtains')) featuresTotal += prices.livingCurtains;
+        if (getVal('livingAC')) featuresTotal += prices.livingAC;
+        if (getVal('livingSwitch')) featuresTotal += prices.livingSwitch;
+
+        const rooms = parseInt(document.getElementById('rooms')?.value || 0);
+        let zigbeeCount = 0;
+        for (let i = 1; i <= rooms; i++) {
+            let hasItem = false;
+            if (getVal(`room${i}Curtain`)) { featuresTotal += prices.roomCurtain; hasItem = true; }
+            if (getVal(`room${i}AC`)) { featuresTotal += prices.roomAC; hasItem = true; }
+            if (getVal(`room${i}Light`)) { featuresTotal += prices.roomLight; hasItem = true; }
+            if (hasItem) zigbeeCount += 1;
+        }
+        const zigbeeCost = zigbeeCount * prices.zigbee;
+
+        if (getVal('smartLockAccessControl')) featuresTotal += prices.smartLockAccessControl;
+        if (getVal('outdoorLawn')) featuresTotal += prices.outdoorLawn;
+        if (getVal('swimmingPool')) featuresTotal += prices.swimmingPool;
+        if (getVal('motionSensor')) featuresTotal += prices.motionSensor;
+        if (getVal('voiceCommand')) featuresTotal += prices.voiceCommand;
+        if (getVal('securitySurveillance')) featuresTotal += prices.securitySurveillance;
+        if (getVal('wifiManagement')) featuresTotal += prices.wifiManagement;
+
+        const subtotal = featuresTotal + zigbeeCost;
+
+        let installation = 0;
+        let installationPercentage = 0;
+        if (subtotal <= 1000) {
+            installationPercentage = 40;
+            installation = subtotal * 0.4;
+        } else if (subtotal <= 2500) {
+            installationPercentage = 30;
+            installation = subtotal * 0.3;
+        } else if (subtotal <= 5000) {
+            installationPercentage = 25;
+            installation = subtotal * 0.25;
+        } else if (subtotal <= 7500) {
+            installationPercentage = 20;
+            installation = subtotal * 0.2;
+        } else {
+            installationPercentage = 15;
+            installation = subtotal * 0.15;
+        }
+
+        const total = subtotal + installation;
+
+        return {
+            total: Math.round(total),
+            featuresTotal: Math.round(featuresTotal),
+            zigbeeCount,
+            zigbeeCost: Math.round(zigbeeCost),
+            installation: Math.round(installation),
+            installationPercentage,
+            subtotal: Math.round(subtotal)
+        };
+    }
+
+    async function updateSheet(quote) {
         const getVal = (id) => {
             const el = document.getElementById(id);
-            if (!el) return false;
-            // Return 'Yes' or 'No' for checkboxes for better spreadsheet logging
-            if (el.type === 'checkbox') return el.checked ? 'Yes' : 'No'; 
-            if (el.tagName === 'SELECT' && el.value === "") return "";
-            return el.value || '';
+            return el ? (el.type === 'checkbox' ? el.checked : el.value) : false;
         };
 
-        const getFormData = (submissionType) => {
-            const data = {
-                submissionType: submissionType, 
-                name: getVal('name'),
-                phone: getVal('phone'), // Handled phone prefix in GAS for text formatting
-                email: getVal('email'),
-                accommodation: getVal('accommodation'),
-                stage: getVal('stage'),
-                city: getVal('city'),
-                area: getVal('area'),
-                rooms: getVal('rooms'),
-                livingCurtains: getVal('livingCurtains'),
-                livingAC: getVal('livingAC'),
-                livingSwitch: getVal('livingSwitch'),
-                smartLockAccessControl: getVal('smartLockAccessControl'),
-                outdoorLawn: getVal('outdoorLawn'),
-                swimmingPool: getVal('swimmingPool'),
-                motionSensor: getVal('motionSensor'),
-                voiceCommand: getVal('voiceCommand'),
-                securitySurveillance: getVal('securitySurveillance'),
-                wifiManagement: getVal('wifiManagement'),
-                finalQuotePrice: getVal('finalQuotePrice')
-            };
-
-            // Populate dynamic room checkboxes (up to 5)
-            for (let i = 1; i <= 5; i++) {
-                data[`room${i}Curtain`] = getVal(`room${i}Curtain`);
-                data[`room${i}AC`] = getVal(`room${i}AC`);
-                data[`room${i}Light`] = getVal(`room${i}Light`);
-            }
-            
-            if (submittedRowId) {
-                data.row = submittedRowId;
-            }
-
-            return data;
+        const data = {
+            mode: "updateFeatures",
+            phone: getVal('phone'),
+            email: getVal('email'),
+            rooms: getVal('rooms'),
+            livingCurtains: getVal('livingCurtains'),
+            livingAC: getVal('livingAC'),
+            livingSwitch: getVal('livingSwitch'),
+            room1Curtain: getVal('room1Curtain'), room1AC: getVal('room1AC'), room1Light: getVal('room1Light'),
+            room2Curtain: getVal('room2Curtain'), room2AC: getVal('room2AC'), room2Light: getVal('room2Light'),
+            room3Curtain: getVal('room3Curtain'), room3AC: getVal('room3AC'), room3Light: getVal('room3Light'),
+            room4Curtain: getVal('room4Curtain'), room4AC: getVal('room4AC'), room4Light: getVal('room4Light'),
+            room5Curtain: getVal('room5Curtain'), room5AC: getVal('room5AC'), room5Light: getVal('room5Light'),
+            smartLockAccessControl: getVal('smartLockAccessControl'),
+            outdoorLawn: getVal('outdoorLawn'),
+            swimmingPool: getVal('swimmingPool'),
+            motionSensor: getVal('motionSensor'),
+            voiceCommand: getVal('voiceCommand'),
+            securitySurveillance: getVal('securitySurveillance'),
+            wifiManagement: getVal('wifiManagement'),
+            quote: quote
         };
-        
-        // --- Multi-Step Navigation & Validation ---
 
-        function updateProgress(stepIndex) {
-            progressSteps.forEach((p, i) => {
-                p.classList.remove("active", "completed");
-                if (i < stepIndex) p.classList.add("completed");
-                else if (i === stepIndex) p.classList.add("active");
+        try {
+            await fetch(WEB_APP_URL, {
+                method: "POST",
+                body: JSON.stringify(data),
+                mode: 'no-cors'
             });
+        } catch (err) {
+            console.error("Sheet update failed", err);
+        }
+    }
+
+    async function getQuote() {
+        if (!document.getElementById('rooms').value) {
+            alert("Please select the number of bedrooms.");
+            return;
         }
 
-        function switchStep(targetIndex) {
-            steps[currentStep].style.opacity = '0';
-            steps[currentStep].style.transform = 'translateY(-10px)';
-            steps[currentStep].classList.remove("active");
-            
-            setTimeout(() => {
-                currentStep = targetIndex;
-                steps[currentStep].classList.add("active");
-                updateProgress(currentStep);
-                steps[currentStep].style.opacity = '';
-                steps[currentStep].style.transform = '';
-            }, 300);
+        const btn = document.getElementById('getQuoteBtn');
+        const original = btn.innerHTML;
+        btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i>';
+
+        try {
+            currentQuoteDetails = calculateQuote();
+
+            // Save to sheet FIRST (so data is captured even if they close)
+            await updateSheet(currentQuoteDetails.total);
+
+            // Show popup with breakdown
+            showQuotePopup();
+        } finally {
+            btn.innerHTML = original;
         }
+    }
 
-        function validateStepInputs(index) {
-            const currentInputs = steps[index].querySelectorAll("input[required], select[required]");
-            const emailInput = document.getElementById('email');
-            const emailError = document.getElementById('email-error');
-            
-            if (emailError) emailError.innerText = '';
+    function showQuotePopup() {
+        const { total, featuresTotal, zigbeeCount, zigbeeCost, installation, installationPercentage, subtotal } = currentQuoteDetails;
 
-            for (let input of currentInputs) {
-                // Check for empty required fields
-                if (!input.value || (input.type === 'hidden' && !input.value)) {
-                    if (input.type === 'hidden') alert("Please select the number of bedrooms.");
-                    else input.reportValidity();
-                    return false;
-                }
-            }
+        document.getElementById('popupTitle').innerText = `Your Quote: AED ${total.toLocaleString()}`;
 
-            // Specific validation for email only on Step 1 (index 0)
-            if (index === 0 && !validateEmailFormat(emailInput.value)) {
-                if (emailError) {
-                    emailError.innerText = 'Please enter a valid email address (e.g., user@domain.com).';
-                    emailInput.focus();
-                } else {
-                    alert('Please enter a valid email address.');
-                }
-                return false;
-            }
-            return true;
+        const breakdownDiv = document.getElementById('breakdown');
+        breakdownDiv.innerHTML = `
+            <div>Features Total: AED ${featuresTotal.toLocaleString()}</div>
+            <div>Zigbee Gateways (${zigbeeCount}): AED ${zigbeeCost.toLocaleString()}</div>
+            <div>Subtotal: AED ${subtotal.toLocaleString()}</div>
+            <div>Installation Fee (${installationPercentage}%): AED ${installation.toLocaleString()}</div>
+            <div><strong>Total: AED ${total.toLocaleString()}</strong></div>
+        `;
+
+        document.getElementById("popup").style.display = "flex";
+    }
+
+    function editConfig() {
+        document.getElementById("popup").style.display = "none";
+
+        // Now reveal the price on the main page
+        if (!priceShown && currentQuoteDetails) {
+            document.getElementById('quoteDisplay').innerText = `AED ${currentQuoteDetails.total.toLocaleString()}`;
+            priceShown = true;
         }
+    }
 
-        function validateEmailFormat(email) {
-            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-            return emailRegex.test(email);
+    function closePopup() {
+        document.getElementById("popup").style.display = "none";
+
+        // Reveal price when popup is closed
+        if (!priceShown && currentQuoteDetails) {
+            document.getElementById('quoteDisplay').innerText = `AED ${currentQuoteDetails.total.toLocaleString()}`;
+            priceShown = true;
         }
+    }
 
-        async function nextStep(index) {
-            if (!validateStepInputs(index)) return;
-
-            // Step 2 (index 1) to Step 3 Transition: Perform Initial Submission
-            if (index === 1 && !submittedRowId) {
-                await initialSubmission();
-                if (!submittedRowId) {
-                    // Failed to save initial data, stop transition
-                    alert("Could not save initial data. Please check your connection.");
-                    return;
-                }
-            }
-            
-            // If the quote was previously run, force the user to click Get Quote again
-            document.getElementById('finalSubmitButton').style.display = 'none';
-            document.getElementById('getQuoteButton').style.display = 'block';
-            document.getElementById('quoteDisplay').style.display = 'none';
-
-
-            switchStep(currentStep + 1);
-        }
-
-        function prevStep(targetIndex) {
-            switchStep(targetIndex - 1);
-        }
-        
-        // --- Form Interaction Handlers ---
-
-        function selectNumber(element, hiddenInputId) {
-            const parent = element.parentElement;
-            const hiddenInput = document.getElementById(hiddenInputId);
-            const siblings = parent.getElementsByClassName('num-box');
-            for (let sib of siblings) sib.classList.remove('selected');
-            element.classList.add('selected');
-            hiddenInput.value = element.getAttribute('data-value');
-
-            resetQuoteState(); 
-
-            if (hiddenInputId === 'rooms') {
-                generateRoomOptions(parseInt(hiddenInput.value));
-            }
-        }
-
-        function toggleTile(visualElement) {
-            visualElement.classList.toggle('selected');
-            const checkboxId = visualElement.getAttribute('data-checkbox-id');
-            const checkbox = document.getElementById(checkboxId);
-            if (checkbox) checkbox.checked = visualElement.classList.contains('selected');
-            
-            resetQuoteState();
-        }
-        
-        function resetQuoteState() {
-            document.getElementById('finalQuotePrice').value = '';
-            document.getElementById('quotePrice').innerText = '--';
-            document.getElementById('quoteDisplay').style.display = 'none';
-            document.getElementById('finalSubmitButton').style.display = 'none';
-            document.getElementById('getQuoteButton').style.display = 'block';
-        }
-
-        function generateRoomOptions(count) {
-            const container = document.getElementById('dynamicRoomsContainer');
-            container.innerHTML = '';
-            for (let i = 1; i <= count; i++) {
-                const roomDiv = document.createElement('div');
-                roomDiv.innerHTML = `
-                <div class="room-header">ROOM ${i} CONFIGURATION</div>
-                <div class="tile-grid">
-                    <div class="card-visual" data-checkbox-id="room${i}Curtain" onclick="toggleTile(this)"><i class="fas fa-scroll"></i><span>Curtains</span></div>
-                    <div class="card-visual" data-checkbox-id="room${i}AC" onclick="toggleTile(this)"><i class="fas fa-wind"></i><span>AC</span></div>
-                    <div class="card-visual" data-checkbox-id="room${i}Light" onclick="toggleTile(this)"><i class="fas fa-lightbulb"></i><span>Lights</span></div>
-                </div>
-                <input type="checkbox" id="room${i}Curtain" style="display:none;">
-                <input type="checkbox" id="room${i}AC" style="display:none;">
-                <input type="checkbox" id="room${i}Light" style="display:none;">
-                `;
-                container.appendChild(roomDiv);
-            }
-        }
-        
-        // --- Server Interaction Functions ---
-
-        /**
-         * Step 1: Submits Step 1 & 2 data to create the row in the sheet.
-         */
-        async function initialSubmission() {
-            const btn = steps[1].querySelector(".btn-next");
-            const originalBtnText = btn.innerHTML;
-            btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i>';
-
-            try {
-                const data = getFormData('initial');
-                
-                // Use the main doPost URL
-                const response = await fetch(webAppUrl, { 
-                    method: "POST",
-                    body: JSON.stringify(data),
-                    headers: { 'Content-Type': 'application/json' },
-                    mode: 'cors'
-                });
-                
-                // Note: If using mode: 'no-cors' (legacy approach), you can't read response.
-                // Assuming modern 'cors' deployment for reliable response.
-                const result = await response.json();
-
-                if (result.status === "success" && result.submissionType === "initial") {
-                    submittedRowId = result.row;
-                } else {
-                    throw new Error(result.message || 'Initial save failed.');
-                }
-            } catch (err) {
-                console.error("Initial Submission Error:", err);
-                submittedRowId = null;
-            } finally {
-                btn.innerHTML = originalBtnText;
-            }
-        }
-        
-        /**
-         * Step 2: Requests a quote based on current Step 1, 2, and 3 selections.
-         */
-        async function getQuote() {
-            if (!validateStepInputs(2)) return;
-            
-            const btn = document.getElementById('getQuoteButton');
-            const originalBtnText = btn.innerHTML;
-            btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Calculating...';
-
-            try {
-                // If the user refreshed or jumped directly to step 3 and initial data wasn't loaded
-                if (!submittedRowId) {
-                    await initialSubmission(); // Try to save initial data now
-                    if (!submittedRowId) throw new Error("Could not save initial data before quoting.");
-                }
-                
-                const quoteData = getFormData('quote'); 
-                
-                // Call the specific GAS function using the ?path= parameter (if deployed as a single endpoint)
-                const response = await fetch(webAppUrl + '?path=getQuoteEndpoint', { 
-                    method: "POST",
-                    body: JSON.stringify(quoteData),
-                    headers: { 'Content-Type': 'application/json' },
-                    mode: 'cors'
-                });
-                
-                const result = await response.json();
-
-                if (result.status === "success" && result.quote) {
-                    // Format the price with currency
-                    const price = parseFloat(result.quote).toLocaleString('en-US', { style: 'currency', currency: 'AED', minimumFractionDigits: 0 });
-                    document.getElementById('quotePrice').innerText = price;
-                    document.getElementById('finalQuotePrice').value = price; 
-                    
-                    document.getElementById('quoteDisplay').style.display = 'block';
-                    document.getElementById('finalSubmitButton').style.display = 'block';
-                    btn.style.display = 'none';
-                } else {
-                    throw new Error(result.message || 'Quote calculation failed.');
-                }
-            } catch (err) {
-                console.error("Quote Error:", err);
-                alert("Could not get quote. Please try again. " + err.message);
-                resetQuoteState();
-            } finally {
-                if(document.getElementById('getQuoteButton').style.display !== 'none') {
-                    btn.innerHTML = originalBtnText;
-                }
-            }
-        }
-
-        /**
-         * Step 3: Submits ALL data (Step 1, 2, 3, and Quote) to update the sheet row.
-         */
-        document.getElementById("surveyForm").addEventListener("submit", async (e) => {
-            e.preventDefault();
-            
-            if (!submittedRowId) {
-                alert("Error: Initial data was not saved. Cannot finalize. Please try refreshing or starting from Step 1.");
-                return;
-            }
-            if (!document.getElementById('finalQuotePrice').value) {
-                alert("Please click 'Get Quote' and wait for the price before finalizing.");
-                return;
-            }
-            
-            const btn = document.getElementById('finalSubmitButton');
-            const originalBtnText = btn.innerHTML;
-            btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Finalizing...';
-
-            try {
-                const data = getFormData('final'); // Gets ALL form data and the row ID
-                
-                const response = await fetch(webAppUrl, {
-                    method: "POST",
-                    body: JSON.stringify(data),
-                    headers: { 'Content-Type': 'application/json' },
-                    mode: 'cors'
-                });
-                
-                const result = await response.json();
-
-                if (result.status === "success") {
-                    document.getElementById("popup").style.display = "flex";
-                } else {
-                    throw new Error(result.message || 'Final submission failed.');
-                }
-
-            } catch (err) {
-                console.error("Final Submission Error:", err);
-                alert("Final submission failed. Please try again. " + err.message);
-            } finally {
-                btn.innerHTML = originalBtnText;
-            }
-        });
-
-        function closePopup() {
-            location.reload();
-        }
-
-        // --- Initialization on Load ---
-        
-        function populateForm(data) {
-            document.getElementById('name').value = data.name || '';
-            // Phone data is stored with a leading ' in the spreadsheet, remove it for the input
-            document.getElementById('phone').value = data.phone ? (data.phone.startsWith("'") ? data.phone.substring(1) : data.phone) : ''; 
-            document.getElementById('email').value = data.email || '';
-            document.getElementById('accommodation').value = data.accommodation || '';
-            document.getElementById('stage').value = data.stage || '';
-            document.getElementById('city').value = data.city || '';
-            document.getElementById('area').value = data.area || '';
-            
-            if (data.rooms) {
-                document.getElementById('rooms').value = data.rooms;
-                const numBox = document.querySelector(`#bedroomOptions .num-box[data-value='${data.rooms}']`);
-                if (numBox) numBox.classList.add('selected');
-                generateRoomOptions(data.rooms);
-            }
-            
-            // This is crucial for floating the labels of the pre-filled fields
-            document.querySelectorAll('input:not([type="hidden"]), select').forEach(el => {
-                // Manually trigger the effect since we set the value programmatically
-                if (el.value) {
-                    el.dispatchEvent(new Event('change')); 
-                }
-            });
-        }
-        
-        async function init() {
-            updateProgress(0); 
-            
-            // Use google.script.run to call the Apps Script server function
-            if (typeof google !== 'undefined' && google.script && google.script.run) {
-                google.script.run.withSuccessHandler(populateInitialData).getInitialData();
-            } else {
-                console.warn("google.script.run not available. Ensure this is deployed as a GAS Web App.");
-            }
-        }
-        
-        function populateInitialData(data) {
-            if (data && data.row) {
-                submittedRowId = data.row;
-                populateForm(data);
-                
-                // Skip to Step 3 (index 2)
-                switchStep(2); 
-                
-                // Update header text to reflect the continuation
-                const h1 = document.querySelector('h1');
-                const subtitle = document.querySelector('.subtitle');
-                if (h1) h1.innerText = 'Refine Your Smart Home';
-                if (subtitle) subtitle.innerText = 'Continue Configuration';
-                
-                // Optional: Provide visual feedback
-                console.log('Welcome back! Personal details loaded.');
-            }
-        }
-        
-        window.onload = init;
-    </script>
+    window.onload = () => updateProgress(0);
+</script>
 </body>
 </html>
