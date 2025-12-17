@@ -121,6 +121,19 @@
             color: var(--trodac-copper); display: flex; align-items: center; justify-content: center;
             font-size: 30px; margin: 0 auto 20px auto;
         }
+        
+                @media (max-width: 768px) {
+            .tile-grid { grid-template-columns: repeat(2, 1fr); gap: 12px; }
+            .card-visual i { font-size: 22px; }
+            .card-visual span { font-size: 13px; }
+            .num-box { min-width: 48px; font-size: 14px; }
+            .room-header { font-size: 13px; margin-top: 30px; }
+        }
+        @media (max-width: 480px) {
+            .tile-grid { grid-template-columns: 1fr; }
+            .container { padding: 30px 20px; }
+            .grid-2 { grid-template-columns: 1fr; }
+        }
     </style>
 </head>
 <body>
@@ -257,7 +270,7 @@
 
     <script>
         // PASTE YOUR GAS WEB APP URL HERE
-        const WEB_APP_URL = "https://script.google.com/macros/s/AKfycbxmZEa3a_NhbaEAejDe2K8QSdmzcQmc7lN1vbMdum96qR6h854VK1CpZfnJFWSPtr6sCQ/exec"; 
+        const WEB_APP_URL = "https://script.google.com/macros/s/AKfycbwrinoL7d90Ss08rwGA-4GKUCux2V2xppbYN0nZg9Uhlb4FfqFzSzSQeZeY-Si2TG8Cug/exec"; 
         
         let currentStep = 0;
 
