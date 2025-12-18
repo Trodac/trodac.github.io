@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Secure Access</title>
+    <title>Dashboard</title>
     <style>
         * {
             margin: 0;
@@ -12,220 +12,86 @@
         }
 
         body {
+            background: #f5f7fa;
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            min-height: 100vh;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            padding: 20px;
-            transition: background 0.5s ease;
+            overflow: hidden; /* Prevents scrollbars */
+            height: 100vh;
         }
 
-        .login-card {
-            background: white;
-            width: 100%;
-            max-width: 400px;
-            border-radius: 16px;
-            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
-            overflow: hidden;
-            animation: fadeIn 0.8s ease-out;
-            z-index: 10;
-        }
-
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(30px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-
-        .header {
-            background: linear-gradient(135deg, #5a67d8, #6b46c1);
-            color: white;
-            text-align: center;
-            padding: 40px 20px;
-        }
-
-        .header h1 {
-            font-size: 28px;
-            margin-bottom: 8px;
-            font-weight: 600;
-        }
-
-        .header p {
-            opacity: 0.9;
-            font-size: 15px;
-        }
-
-        .form-container {
-            padding: 40px;
-        }
-
-        .input-group {
-            margin-bottom: 24px;
-        }
-
-        label {
-            display: block;
-            margin-bottom: 8px;
-            color: #4a5568;
-            font-weight: 500;
-            font-size: 14px;
-        }
-
-        input {
-            width: 100%;
-            padding: 14px 16px;
-            border: 2px solid #e2e8f0;
-            border-radius: 10px;
-            font-size: 16px;
-            transition: all 0.3s ease;
-            background-color: #f8fafc;
-        }
-
-        input:focus {
-            outline: none;
-            border-color: #667eea;
-            background-color: white;
-            box-shadow: 0 0 0 4px rgba(102, 126, 234, 0.15);
-        }
-
-        button {
-            width: 100%;
-            padding: 14px;
-            background: linear-gradient(135deg, #667eea, #764ba2);
-            color: white;
-            border: none;
-            border-radius: 10px;
-            font-size: 16px;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            position: relative;
-        }
-
-        button:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 10px 25px rgba(102, 126, 234, 0.3);
-        }
-
-        .error {
-            color: #e53e3e;
-            font-size: 14px;
-            margin-top: 16px;
-            text-align: center;
-            opacity: 0;
-            transition: opacity 0.3s ease;
-        }
-
-        .error.show {
-            opacity: 1;
-        }
-
-        .spinner {
-            display: none;
-            width: 20px;
-            height: 20px;
-            border: 2px solid #ffffff40;
-            border-top: 2px solid white;
-            border-radius: 50%;
-            animation: spin 1s linear infinite;
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-        }
-
-        @keyframes spin {
-            0% { transform: translate(-50%, -50%) rotate(0deg); }
-            100% { transform: translate(-50%, -50%) rotate(360deg); }
-        }
-
-        /* Fullscreen iframe view */
-        #spreadsheetView {
-            display: none;
-            position: fixed;
-            top: 0;
-            left: 0;
+        iframe {
             width: 100vw;
             height: 100vh;
             border: none;
-            z-index: 100;
+            display: block;
         }
 
-        body.show-spreadsheet {
-            background: #f5f5f5;
+        /* Optional: subtle loading overlay until iframe fully loads */
+        .loading {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            font-size: 24px;
+            z-index: 9999;
+            transition: opacity 0.6s ease-out;
         }
 
-        @media (max-width: 480px) {
-            .form-container { padding: 30px; }
-            .header { padding: 30px 20px; }
+        .loading.hidden {
+            opacity: 0;
+            pointer-events: none;
+        }
+
+        .spinner {
+            width: 50px;
+            height: 50px;
+            border: 5px solid rgba(255, 255, 255, 0.3);
+            border-top: 5px solid white;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin-bottom: 20px;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        h1 {
+            font-weight: 500;
+            opacity: 0.9;
         }
     </style>
 </head>
 <body>
-    <div class="login-card" id="loginCard">
-        <div class="header">
-            <h1>Trodac Response</h1>
-            <p>Please enter your credentials to view the dashboard</p>
-        </div>
-        <div class="form-container">
-            <form id="loginForm">
-                <div class="input-group">
-                    <label for="username">Username</label>
-                    <input type="text" id="username" placeholder="Enter username" required autocomplete="username">
-                </div>
-                <div class="input-group">
-                    <label for="password">Password</label>
-                    <input type="password" id="password" placeholder="Enter password" required autocomplete="current-password">
-                </div>
-                <button type="submit" id="loginBtn">
-                    <span id="btnText">Login</span>
-                    <div class="spinner" id="spinner"></div>
-                </button>
-            </form>
-            <p class="error" id="errorMsg">Invalid username or password. Please try again.</p>
-        </div>
+    <!-- Loading screen (disappears when iframe loads) -->
+    <div class="loading" id="loading">
+        <div class="spinner"></div>
+        <h1>Loading Dashboard...</h1>
     </div>
 
-    <!-- Fullscreen embedded spreadsheet -->
-    <iframe id="spreadsheetView" 
-            src="https://docs.google.com/spreadsheets/d/e/2PACX-1vRFagXEjjFqCVs1ePB3zXozkUXbKvN4eFtDqO6hp6eAwie-mKwhKZPAAqb5gCnqj9-8tzy7y2KbIb0r/pubhtml?widget=true&amp;headers=false"
-            allowfullscreen>
+    <!-- Fullscreen embedded Google Sheet -->
+    <iframe 
+        src="https://docs.google.com/spreadsheets/d/e/2PACX-1vRFagXEjjFqCVs1ePB3zXozkUXbKvN4eFtDqO6hp6eAwie-mKwhKZPAAqb5gCnqj9-8tzy7y2KbIb0r/pubhtml?widget=true&amp;headers=false"
+        allowfullscreen>
     </iframe>
 
     <script>
-        const form = document.getElementById('loginForm');
-        const loginCard = document.getElementById('loginCard');
-        const spreadsheetView = document.getElementById('spreadsheetView');
-        const errorMsg = document.getElementById('errorMsg');
-        const btnText = document.getElementById('btnText');
-        const spinner = document.getElementById('spinner');
-        const loginBtn = document.getElementById('loginBtn');
+        // Hide loading screen once iframe content is loaded
+        const iframe = document.querySelector('iframe');
+        const loading = document.getElementById('loading');
 
-        form.addEventListener('submit', function(e) {
-            e.preventDefault();
-            
-            const username = document.getElementById('username').value.trim();
-            const password = document.getElementById('password').value;
-
-            errorMsg.classList.remove('show');
-
-            if (username === 'admin' && password === '1234') {
-                // Show loading
-                btnText.textContent = 'Accessing...';
-                spinner.style.display = 'block';
-                loginBtn.disabled = true;
-
-                // After short delay, show fullscreen spreadsheet
-                setTimeout(() => {
-                    loginCard.style.display = 'none';
-                    spreadsheetView.style.display = 'block';
-                    document.body.classList.add('show-spreadsheet');
-                }, 800);
-            } else {
-                errorMsg.classList.add('show');
-            }
-        });
+        iframe.onload = function() {
+            setTimeout(() => {
+                loading.classList.add('hidden');
+            }, 300); // Small delay for smooth fade
+        };
     </script>
 </body>
 </html>
