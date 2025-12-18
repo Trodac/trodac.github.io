@@ -1,10 +1,85 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-    <meta http-equiv="refresh" content="0; url=https://docs.google.com/spreadsheets/d/e/2PACX-1vRFagXEjjFqCVs1ePB3zXozkUXbKvN4eFtDqO6hp6eAwie-mKwhKZPAAqb5gCnqj9-8tzy7y2KbIb0r/pubhtml">
-    <title>Page Redirection</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login to View Spreadsheet</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f0f0f0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+        }
+        .login-container {
+            background-color: white;
+            padding: 40px;
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+            width: 300px;
+            text-align: center;
+        }
+        h2 {
+            margin-bottom: 20px;
+        }
+        input {
+            width: 100%;
+            padding: 10px;
+            margin: 10px 0;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            box-sizing: border-box;
+        }
+        button {
+            width: 100%;
+            padding: 10px;
+            background-color: #4285f4;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+        button:hover {
+            background-color: #3367d6;
+        }
+        .error {
+            color: red;
+            margin-top: 10px;
+            display: none;
+        }
+    </style>
 </head>
 <body>
-    <p>If you are not redirected automatically, follow this <a href="https://docs.google.com/spreadsheets/d/e/2PACX-1vRFagXEjjFqCVs1ePB3zXozkUXbKvN4eFtDqO6hp6eAwie-mKwhKZPAAqb5gCnqj9-8tzy7y2KbIb0r/pubhtml">link to the new page</a>.</p>
+    <div class="login-container">
+        <h2>Login Required</h2>
+        <form id="loginForm">
+            <input type="text" id="username" placeholder="Username" required><br>
+            <input type="password" id="password" placeholder="Password" required><br>
+            <button type="submit">Login</button>
+        </form>
+        <p class="error" id="errorMsg">Invalid credentials. Try again.</p>
+    </div>
+
+    <script>
+        const form = document.getElementById('loginForm');
+        const errorMsg = document.getElementById('errorMsg');
+        const targetUrl = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vRFagXEjjFqCVs1ePB3zXozkUXbKvN4eFtDqO6hp6eAwie-mKwhKZPAAqb5gCnqj9-8tzy7y2KbIb0r/pubhtml';
+
+        form.addEventListener('submit', function(e) {
+            e.preventDefault();
+            const username = document.getElementById('username').value;
+            const password = document.getElementById('password').value;
+
+            if (username === 'admin' && password === '1234') {
+                window.location.href = targetUrl;
+            } else {
+                errorMsg.style.display = 'block';
+            }
+        });
+    </script>
 </body>
 </html>
