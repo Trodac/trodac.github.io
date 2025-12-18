@@ -6,7 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@300;400;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <style>
+<style>
         :root {
             --bg-dark: #050914;
             --card-bg: rgba(20, 30, 48, 0.75);
@@ -89,20 +89,21 @@
         .btn-next { background: white; color: #020617; }
         .btn-back { background: transparent; color: var(--text-muted); }
         .btn-secondary { background: transparent; color: white; border: 1px solid white; margin-top: 10px; }
-        
+       
         /* POPUP STYLES */
         .popup { position: fixed; inset: 0; backdrop-filter: blur(15px); display: none; align-items: center; justify-content: center; z-index: 100; background: rgba(0,0,0,0.5); }
-        .popup-box { 
-            background: var(--card-bg); 
-            border: 1px solid var(--glass-border); 
-            padding: 40px; 
-            border-radius: 24px; 
-            text-align: center; 
+        .popup-box {
+            background: var(--card-bg);
+            border: 1px solid var(--glass-border);
+            padding: 40px;
+            border-radius: 24px;
+            text-align: center;
             box-shadow: 0 25px 80px rgba(0,0,0,0.9);
-            width: 90%; 
-            max-width: 480px; 
+            width: 90%;
+            max-width: 480px;
             position: relative;
         }
+        
         .popup-box::before {
             content: ''; position: absolute; top: 0; left: 0; right: 0; height: 1px;
             background: linear-gradient(90deg, transparent, var(--trodac-copper), transparent);
@@ -121,19 +122,86 @@
             color: var(--trodac-copper); display: flex; align-items: center; justify-content: center;
             font-size: 30px; margin: 0 auto 20px auto;
         }
-        
-                @media (max-width: 768px) {
-            .tile-grid { grid-template-columns: repeat(2, 1fr); gap: 12px; }
-            .card-visual i { font-size: 22px; }
-            .card-visual span { font-size: 13px; }
-            .num-box { min-width: 48px; font-size: 14px; }
-            .room-header { font-size: 13px; margin-top: 30px; }
-        }
-        @media (max-width: 480px) {
-            .tile-grid { grid-template-columns: 1fr; }
-            .container { padding: 30px 20px; }
-            .grid-2 { grid-template-columns: 1fr; }
-        }
+
+        /* MOBILE OPTIMIZATIONS - IMPROVED FOR LESS SCROLLING */
+@media (max-width: 768px) {
+    .container { padding: 30px 20px; margin: 10px auto; }
+    h1 { font-size: 28px; }
+    .subtitle { margin-bottom: 20px; }
+    
+    /* 2 columns for most phones */
+    .tile-grid { 
+        grid-template-columns: repeat(2, 1fr); 
+        gap: 12px; 
+        margin-top: 10px; 
+        margin-bottom: 20px; 
+    }
+    
+    .card-visual { 
+        aspect-ratio: 1 / 0.85; 
+        gap: 8px; 
+        padding: 12px 0; 
+    }
+    .card-visual i { font-size: 24px; }
+    .card-visual span { font-size: 13px; line-height: 1.2; }
+    
+    .num-box { min-width: 42px; height: 45px; font-size: 14px; }
+    .number-options { gap: 8px; justify-content: center; }
+    
+    .room-header { 
+        font-size: 12px; 
+        margin-top: 28px; 
+        margin-bottom: 12px; 
+    }
+    .number-selector-label { 
+        font-size: 11px; 
+        margin-bottom: 8px; 
+        margin-top: 25px; 
+    }
+    
+    .btn-container { 
+        margin-top: 30px; 
+        flex-direction: column-reverse; 
+        gap: 12px; 
+    }
+    .btn-back, .btn-next { width: 100%; padding: 14px; font-size: 15px; }
+    
+    .grid-2 { grid-template-columns: 1fr; }
+}
+
+@media (min-width: 769px) {
+    /* Keep original 3 columns on desktop/larger screens */
+    .tile-grid { grid-template-columns: repeat(3, 1fr); }
+}
+
+@media (max-width: 480px) {
+    /* Even more compact on small phones - horizontal tiles */
+    .tile-grid { 
+        grid-template-columns: 1fr; 
+        gap: 10px; 
+    }
+    .card-visual { 
+        aspect-ratio: auto; 
+        height: 60px; /* Fixed shorter height */
+        flex-direction: row; 
+        justify-content: flex-start; 
+        align-items: center; 
+        padding: 0 16px; 
+        gap: 16px; 
+        text-align: left; 
+    }
+    .card-visual i { 
+        font-size: 22px; 
+        margin: 0; 
+    }
+    .card-visual span { 
+        font-size: 14px; 
+    }
+    
+    .container { padding: 25px 15px; }
+    .num-box { min-width: 38px; height: 42px; font-size: 13px; }
+    .room-header { margin-top: 22px; }
+}
     </style>
 </head>
 <body>
@@ -268,7 +336,7 @@
 
     <script>
         // PASTE YOUR GAS WEB APP URL HERE
-        const WEB_APP_URL = "https://script.google.com/macros/s/AKfycbwrinoL7d90Ss08rwGA-4GKUCux2V2xppbYN0nZg9Uhlb4FfqFzSzSQeZeY-Si2TG8Cug/exec"; 
+        const WEB_APP_URL = "https://script.google.com/macros/s/AKfycbxfbo5QiTVxojD19q2-20ZyJY-moqpxuxfIY6waIktHgd6CY7kcSoL7CAhHBfGCrXBE2w/exec"; 
         
         let currentStep = 0;
 
