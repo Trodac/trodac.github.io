@@ -123,13 +123,13 @@
             font-size: 30px; margin: 0 auto 20px auto;
         }
 
-        /* MOBILE OPTIMIZATIONS - IMPROVED FOR LESS SCROLLING */
+        
 @media (max-width: 768px) {
     .container { padding: 30px 20px; margin: 10px auto; }
     h1 { font-size: 28px; }
     .subtitle { margin-bottom: 20px; }
     
-    /* 2 columns for most phones */
+    
     .tile-grid { 
         grid-template-columns: repeat(2, 1fr); 
         gap: 12px; 
@@ -175,14 +175,14 @@
 }
 
 @media (max-width: 480px) {
-    /* Even more compact on small phones - horizontal tiles */
+   
     .tile-grid { 
         grid-template-columns: 1fr; 
         gap: 10px; 
     }
     .card-visual { 
         aspect-ratio: auto; 
-        height: 60px; /* Fixed shorter height */
+        height: 60px;
         flex-direction: row; 
         justify-content: flex-start; 
         align-items: center; 
@@ -335,7 +335,7 @@
     </div>
 
     <script>
-        // PASTE YOUR GAS WEB APP URL HERE
+        
         const WEB_APP_URL = "https://script.google.com/macros/s/AKfycbxfbo5QiTVxojD19q2-20ZyJY-moqpxuxfIY6waIktHgd6CY7kcSoL7CAhHBfGCrXBE2w/exec"; 
         
         let currentStep = 0;
